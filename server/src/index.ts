@@ -34,7 +34,13 @@ const initServer = async () => {
   await stitchSchema();
 
   const apolloServer = new ApolloServer({ schema, formatError: formatArgumentValidationError });
-  apolloServer.applyMiddleware({ app });
+  apolloServer.applyMiddleware({ app,
+    cors: {
+      credentials: true,
+      origin: true
+    },
+    path: "/"
+  });
 
   app.listen(process.env.PORT, () => {
     console.log('Server running on port', process.env.PORT);

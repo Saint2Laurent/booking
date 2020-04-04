@@ -7,11 +7,17 @@ import { Form, Input, Button, Row, Col } from 'antd';
 import { isMailValid } from '../../../../../shared/validators/account-validator';
 import GoogleLogin from 'react-google-login';
 import { useMailValidator } from '../../../hooks/use-mail-validators';
+import {gql} from "apollo-boost";
+import {useMutation} from "@apollo/react-hooks";
 
 interface RegisterEmailProps {
   swapView(): any;
   setMail(email: string): any;
 }
+
+
+
+
 
 export const RegisterEmail: React.FC<RegisterEmailProps> = ({ swapView, setMail }: RegisterEmailProps) => {
   const [form] = Form.useForm();

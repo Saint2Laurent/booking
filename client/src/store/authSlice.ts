@@ -1,4 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { gql } from 'apollo-boost';
+import {useLazyQuery, useMutation} from '@apollo/react-hooks';
+
 
 interface AuthState {
   isLoggedIn: boolean;
@@ -6,14 +9,16 @@ interface AuthState {
 }
 
 export const slice = createSlice({
-  name: 'auth',
-  initialState: {
+    name: 'auth',
+    initialState: {
     isAuthenticated: true,
     user: {
       profileUrl: 'https://lh3.googleusercontent.com/a-/AOh14GiwM_y4MyoxBsEApgd9Qf2__s3mEL74mgbFERZA=s96-c'
     }
   },
   reducers: {
+    registerUser: () => {
+    },
     login: (state, action) => {
       state.isAuthenticated = true;
       action.payload.history.push('/');

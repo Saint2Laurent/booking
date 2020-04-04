@@ -8,21 +8,56 @@ import { isFullNameValid, isPasswordValid, isAccountValid } from '../../../../..
 import ReCAPTCHA from 'react-google-recaptcha';
 import { isEmpty } from '../../../../../shared/utils/is-empty';
 import { useMailValidator } from '../../../hooks/use-mail-validators';
+import {useMutation} from "@apollo/react-hooks";
+import gql from "graphql-tag";
 
 interface RegisterInfoProps {
   mail: string;
   initView: boolean;
 }
 
+
+const REGISTER_USER = gql`
+     mutation {
+      registerUser(
+        mail: "yvesysl@protonmail.com"
+        fullName: "gea"
+        password: "av3243g34g34g34gvzf32!sd"
+      ) {
+        ... on RegistrationResponse {
+          success
+        }
+        ... on RegistrationErrors {
+          mailInvalid
+          mailNeedsConfirmation
+          passwordInvalid
+          hashingFailed
+          mailExists
+          fullNameInvalid
+        }
+      }
+    }
+`;
+
+
+
 const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterInfoProps) => {
   const recaptchaRef: RefObject<ReCAPTCHA> = React.createRef<ReCAPTCHA>();
   const [form] = Form.useForm();
   const fullNameRef: any = useRef();
+  const [registerUser, { data }] = useMutation(REGISTER_USER);
+
 
   useEffect(() => {}, []);
 
-  const finished = e => {
-    console.log(e);
+  const register = e => {
+    registerUser()
+        .then((d)=>{
+          console.log(d)
+        })
+        .catch((e)=>{
+          console.log(e)
+        })
   };
 
   const [validationResponse, setEmail] = useMailValidator();
@@ -38,6 +73,7 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
     }
   }, [mail]);
 
+
   const onMailChange = () => {
     setEmail(form.getFieldValue('mail'));
   };
@@ -52,7 +88,7 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
 
   return (
     <Col span={24} className={'text-left p-1 mt-4'}>
-      <Form form={form} onFinish={finished}>
+      <Form form={form} onSubmitCapture={register}>
         <Row>
           <Col span={24}>
             <Form.Item
@@ -118,17 +154,16 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
 
         <Row className="mt-5">
           <Button
-            loading
             htmlType={'submit'}
             block
             className={`${style.inputButton} auth-disabled`}
-            disabled={
-              !isAccountValid({
-                mail: form.getFieldValue('mail'),
-                password: form.getFieldValue('password'),
-                fullName: form.getFieldValue('fullName')
-              })
-            }
+            // disabled={
+            //   !isAccountValid({
+            //     mail: form.getFieldValue('mail'),
+            //     password: form.getFieldValue('password'),
+            //     fullName: form.getFieldValue('fullName')
+            //   })
+            // }
             type={'primary'}
           >
             Σύνεχεια
