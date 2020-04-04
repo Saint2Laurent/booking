@@ -1,0 +1,97 @@
+$text-color-secondary: #ffae2a;
+$primary-color: #ff4036;
+$dark-color: rgba(16, 16, 16, 0.94);
+$light-color: rgba(255, 255, 255, 0.93);
+$tot: #ff4d44;
+
+*{
+  font-family: 'Open Sans', sans-serif !important;
+
+}
+
+.light-sky-blue{
+  color: #4e58fa;
+}
+
+.line-height{
+  line-height: .15em;
+}
+
+.mt-6{
+  margin-top: 5.9rem;
+}
+
+.mb-5{
+  margin-bottom: 5.5rem;
+}
+
+.display-1{
+  font-size: 4.6rem;
+}
+
+.display-2{
+  font-size: 3.7rem;
+}
+
+.display-3{
+  font-size: 2.5rem;
+}
+
+.display-4{
+   font-size: 1.7rem;
+ }
+
+
+.mr-auto{
+  margin-right: auto !important;
+}
+
+.d-inline{
+  display: inline;
+}
+
+.position-absolute{
+  position: absolute;
+}
+
+.display-none{
+  display: none;
+}
+
+.text-link{
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.bgTest{
+  background-color: red !important;
+}
+
+.borderTest{
+  border: 1px solid #828282 !important;
+}
+
+.text-info{
+  color: $text-color-secondary !important;
+}
+
+.p-6{
+  padding: 6rem;
+}
+
+.text-smaller{
+  font-size: .9em;
+}
+
+.small-text{
+  font-size: .75rem;
+  line-height: .85rem;
+}
+
+.position-relative{
+  position: relative;
+}
+
+.text-smaller{
+  font-size: .9rem
+}

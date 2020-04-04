@@ -1,0 +1,13 @@
+{
+  "name": "default",
+  "type":  "postgres",
+  "host": "localhost",
+  "post":  5432,
+  "username": "postgres",
+  "password": "revariapodw",
+  "database": "ubook",
+  "synchronize": true,
+  "entities": [
+    "src/entity/*.ts"
+  ]
+}

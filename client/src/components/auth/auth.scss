@@ -1,0 +1,37 @@
+.ant-col.ant-form-item-label{
+  line-height: 1rem ;
+}
+
+.ant-input::placeholder{
+  font-size: .84rem;
+  font-weight: 600;
+  color: #878787;
+
+}
+
+.ant-form-explain, .ant-form-item-extra{
+  font-size: .8rem !important;
+  text-align: left;
+}
+
+.ant-btn-primary[disabled].auth-disabled{
+  background-color: #2a45ff !important;
+  color: #d7d7d7;
+}
+
+.ant-btn-primary[disabled].auth-disabled:hover{
+  cursor: pointer;
+}
+
+.ant-btn-primary[disabled].auth-disabled:hover{
+  color: #cbcbcb;
+}
+
+.ant-form-item-required::before{
+  display: none !important;
+}
+
+.auth-password-input .ant-form-item-children-icon {
+  transform: translateY(-.24rem)
+}
+

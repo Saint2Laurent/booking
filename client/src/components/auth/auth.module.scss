@@ -1,0 +1,85 @@
+@import '../../styles/global.scss';
+
+.container{
+  background-image: linear-gradient(to right, rgba(2, 0, 36, 0.53) 0%, rgba(31, 60, 106, 0.34) 30%, rgba(64, 46, 255, 0.16) 100%), linear-gradient(to top, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.95)), url('../../assets/images/city.jpg');
+  height: 100vh;
+}
+
+.authLogo{
+  margin-top: 1rem;
+  width: 13rem;
+}
+
+.authRedirect{
+  position: absolute;
+  color: white;
+  top: 30%;
+  right: 5%;
+  opacity: .85;
+}
+
+
+.authForm{
+  background-color: rgba(255, 255, 255, 0.93);
+  border: 1px solid #3b3b3b;
+  box-shadow:  0px 4px 6px rgba(255, 255, 255, 0.49);
+  border-radius: 3px;
+  padding: 1.9rem 1.7rem 1.1rem 1.7rem;
+  margin-top: 3rem;
+}
+
+
+.authInput::placeholder{
+  color: #a3a3a3;
+  font-weight: 500;
+  font-size: .85rem;
+  letter-spacing: -0.0125rem;
+}
+
+
+.inputButton{
+  font-weight: 600;
+  height: 2.3rem;
+}
+
+.inputButton[disabled]{
+  background-color: #c5c5c5;
+  cursor: auto;
+}
+
+.inputButton[disabled]:hover{
+  background-color: #d1d1d1;
+}
+
+.headingTitle{
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: -0.0125rem;
+  font-family: Verdana, Geneva, sans-serif;
+  -webkit-font-smoothing: antialiased;
+
+}
+
+.slideContainer{
+  display: flex;
+  overflow: hidden;
+  scroll-behavior: smooth;
+  transition: all 1s;
+}
+
+.loginContainer{
+  display: flex;
+  scroll-behavior: smooth;
+  transition: all 1s;
+  margin-top:1rem;
+}
+
+.authFormItem{
+  margin-bottom: 12px;
+}
+
+
+.buttonIcon{
+  width: 1.2rem;
+}
+

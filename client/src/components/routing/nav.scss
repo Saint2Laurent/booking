@@ -1,0 +1,35 @@
+.ant-menu-item.nav-menu-item{
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ant-menu-inline-collapsed > .ant-menu-item.nav-sider-item{
+  padding: 0 !important;
+  line-height: 15px;
+  width: 60px;
+  box-shadow: none !important;
+}
+
+
+.ant-menu-inline-collapsed{
+  width: 60px;
+}
+
+.ant-menu-inline-collapsed .ant-menu-item.nav-sider-item{
+  text-align: center;
+}
+
+
+.ant-menu-item.nav-sider-item{
+  margin: 0 !important;
+}
+
+.ant-menu-item.nav-sider-item:nth-child(1){
+  margin-top: .5rem !important;
+}
+
+.ant-menu-inline,.ant-menu-vertical{
+  border: 0 !important;
+}

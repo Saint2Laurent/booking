@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 24.0.2, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 575.7 202.7" style="enable-background:new 0 0 575.7 202.7;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:url(#SVGID_1_);}
+	.st1{fill:url(#SVGID_2_);}
+	.st2{fill:url(#SVGID_3_);}
+	.st3{fill:none;}
+	.st4{font-family:'MyriadPro-Regular';}
+	.st5{font-size:109px;}
+</style>
+<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="76.4398" y1="192.0049" x2="143.1745" y2="125.2702" gradientTransform="matrix(6.123234e-17 -1 1 6.123234e-17 15.8901 218.5901)">
+	<stop  offset="0" style="stop-color:#1DE2CE"/>
+	<stop  offset="0.3837" style="stop-color:#158BFF"/>
+	<stop  offset="1" style="stop-color:#5CFFBF"/>
+</linearGradient>
+<path class="st0" d="M178.7,169.5l33.8-91.3c3-8-1.6-17.8-9.7-20.6L178,48.7c-8-2.9-15.7,2.2-16.5,11l-9,100.2
+	C151,176.6,173,184.8,178.7,169.5z"/>
+<linearGradient id="SVGID_2_" gradientUnits="userSpaceOnUse" x1="72.5173" y1="150.4061" x2="173.9049" y2="49.0185" gradientTransform="matrix(6.123234e-17 -1 1 6.123234e-17 15.8901 218.5901)">
+	<stop  offset="0" style="stop-color:#1DE2CE"/>
+	<stop  offset="0.3837" style="stop-color:#158BFF"/>
+	<stop  offset="1" style="stop-color:#5CFFBF"/>
+</linearGradient>
+<path class="st1" d="M109.9,169.7L82.7,36.4c-2.2-10.8,6.5-19.1,16.1-15.7l37.9,13.6c6.7,2.4,11.2,9.6,10.5,16.9L136.6,171
+	C135.1,187.4,113.3,186.4,109.9,169.7z"/>
+<linearGradient id="SVGID_3_" gradientUnits="userSpaceOnUse" x1="60.1667" y1="94.7804" x2="159.2127" y2="-4.2657" gradientTransform="matrix(6.123234e-17 -1 1 6.123234e-17 15.8901 218.5901)">
+	<stop  offset="0" style="stop-color:#1DE2CE"/>
+	<stop  offset="0.3837" style="stop-color:#158BFF"/>
+	<stop  offset="1" style="stop-color:#5CFFBF"/>
+</linearGradient>
+<path class="st2" d="M67.5,172.7L22.3,62.2c-4.7-11.6,4.3-22.6,15.3-18.6l24.5,8.8c5.1,1.8,9.1,6.6,10.3,12.3l20.7,101.8
+	C96.6,183.9,74.4,189.4,67.5,172.7z"/>
+<rect x="222" y="65.1" class="st3" width="313.1" height="90.1"/>
+<text transform="matrix(1 0 0 1 222.0347 142.4964)" class="st4 st5">uBook</text>
+</svg>
