@@ -13,7 +13,7 @@ export const sendConfirmationMail = (user: User, token: string) => {
   });
 
   const message = {
-    from: 'yvesysl@protonmail.com',
+    from: 'no-reply@ubook.gr',
     to: user.mail,
     subject: 'Επιβεβαίωση email',
     html: confirmationHtml(user, token)

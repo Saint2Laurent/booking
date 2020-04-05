@@ -8,21 +8,30 @@ import { isFullNameValid, isPasswordValid, isAccountValid } from '../../../../..
 import ReCAPTCHA from 'react-google-recaptcha';
 import { isEmpty } from '../../../../../shared/utils/is-empty';
 import { useMailValidator } from '../../../hooks/use-mail-validators';
-import {useMutation} from "@apollo/react-hooks";
-import gql from "graphql-tag";
+import { useMutation } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
+import { CheckOutlined } from '@ant-design/icons';
+import { Wave } from 'react-animated-text';
 
 interface RegisterInfoProps {
   mail: string;
   initView: boolean;
 }
 
+const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterInfoProps) => {
+  const recaptchaRef: RefObject<ReCAPTCHA> = React.createRef<ReCAPTCHA>();
+  const [form] = Form.useForm();
+  const fullNameRef: any = useRef();
+  const [validationResponse, setEmail, email] = useMailValidator();
+  const [fullName, setFullName] = useState('');
+  const [password, setPassword] = useState('');
 
-const REGISTER_USER = gql`
+  const REGISTER_USER = gql`
      mutation {
       registerUser(
-        mail: "yvesysl@protonmail.com"
-        fullName: "gea"
-        password: "av3243g34g34g34gvzf32!sd"
+        mail: "${email}"
+        fullName: "${fullName}"
+        password: "${password}"
       ) {
         ... on RegistrationResponse {
           success
@@ -39,30 +48,23 @@ const REGISTER_USER = gql`
     }
 `;
 
-
-
-const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterInfoProps) => {
-  const recaptchaRef: RefObject<ReCAPTCHA> = React.createRef<ReCAPTCHA>();
-  const [form] = Form.useForm();
-  const fullNameRef: any = useRef();
-  const [registerUser, { data }] = useMutation(REGISTER_USER);
-
+  const [registerUser, { data, loading }] = useMutation(REGISTER_USER, { fetchPolicy: 'no-cache' });
+  const [registerSuccessful, setRegisterSuccessful] = useState(false)
 
   useEffect(() => {}, []);
 
   const register = e => {
     registerUser()
-        .then((d)=>{
-          console.log(d)
-        })
-        .catch((e)=>{
-          console.log(e)
-        })
+      .then(d => {
+        if(d.data.registerUser.__typename === 'RegistrationResponse' && d.data.registerUser.success){
+            setRegisterSuccessful(true)
+        }
+        console.log(d);
+      })
+      .catch(e => {
+        console.log(e);
+      });
   };
-
-  const [validationResponse, setEmail] = useMailValidator();
-  const [fullName, setFullName] = useState('');
-  const [password, setPassword] = useState('');
 
   useEffect(() => {
     if (initView) {
@@ -73,8 +75,8 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
     }
   }, [mail]);
 
-
   const onMailChange = () => {
+    console.log(form.getFieldValue('mail'));
     setEmail(form.getFieldValue('mail'));
   };
 
@@ -88,7 +90,7 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
 
   return (
     <Col span={24} className={'text-left p-1 mt-4'}>
-      <Form form={form} onSubmitCapture={register}>
+      <Form form={form} onSubmitCapture={register} >
         <Row>
           <Col span={24}>
             <Form.Item
@@ -154,32 +156,49 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
 
         <Row className="mt-5">
           <Button
+            loading={loading}
             htmlType={'submit'}
             block
             className={`${style.inputButton} auth-disabled`}
-            // disabled={
-            //   !isAccountValid({
-            //     mail: form.getFieldValue('mail'),
-            //     password: form.getFieldValue('password'),
-            //     fullName: form.getFieldValue('fullName')
-            //   })
-            // }
+              icon={registerSuccessful && <CheckOutlined />}
+            disabled={
+              !isAccountValid({
+                mail: form.getFieldValue('mail'),
+                password: form.getFieldValue('password'),
+                fullName: form.getFieldValue('fullName')
+              }) || registerSuccessful
+            }
             type={'primary'}
           >
-            Σύνεχεια
+            {
+              !registerSuccessful ? <span>Σύνεχεια</span> : <span className='pulse'>Εγγραφή επιτυχής</span>
+            }
           </Button>
         </Row>
 
         <Row className={'text-center'}>
-          <Col span={24}>Ή</Col>
+          <Col span={24}>
+            {
+              registerSuccessful ?
+                  <div className={style.redirectedSoon}>
+                    Θα ανακατευθεινειτε συντομα<Wave text="..." effect="verticalFadeIn" effectChange={.1} speed={2} />
+                  </div>
+                  :<span>Ή</span>
+
+            }
+
+          </Col>
         </Row>
 
-        <Row>
-          <Button block className={style.inputButton}>
-            <img className={style.buttonIcon} src={googleIcon} alt="" />
-            <span className="ml-1">Σύνεχεια με Google</span>
-          </Button>
-        </Row>
+        {
+          !registerSuccessful &&
+          <Row>
+            <Button block className={style.inputButton}>
+              <img className={style.buttonIcon} src={googleIcon} alt="" />
+              <span className="ml-1">Σύνεχεια με Google</span>
+            </Button>
+          </Row>
+        }
 
         <Row className={'mt-4 text-smaller text-center'}>
           <Col span={24}>

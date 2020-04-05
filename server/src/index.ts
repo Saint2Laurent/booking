@@ -4,7 +4,7 @@ import { buildSchema, formatArgumentValidationError } from 'type-graphql';
 import Express from 'express';
 import { createConnection } from 'typeorm';
 import { User } from './entity/User';
-import AuthResolver from './modules/auth/auth-resolver';
+import RegisterResolver from "./modules/auth/register/register-resolver";
 require('dotenv').config();
 
 const app = Express();
@@ -22,7 +22,7 @@ const connectToDb = async () => {
 const stitchSchema = async () => {
   try {
     schema = await buildSchema({
-      resolvers: [AuthResolver]
+      resolvers: [RegisterResolver]
     });
   } catch (e) {
     console.log('Failed to create schema', e);

@@ -31,7 +31,6 @@
 
 .authInput::placeholder{
   color: #a3a3a3;
-  font-weight: 500;
   font-size: .85rem;
   letter-spacing: -0.0125rem;
 }
@@ -78,6 +77,14 @@
   margin-bottom: 12px;
 }
 
+.redirectedSoon{
+  font-size: .85rem;
+  font-weight: 600;
+  display: flex;
+  color: #e17b54;
+  justify-content: center;
+
+}
 
 .buttonIcon{
   width: 1.2rem;

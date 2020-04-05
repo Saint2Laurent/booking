@@ -15,10 +15,10 @@ export const useMailValidator = () => {
   }
 
   const IS_MAIL_REGISTERED = gql`
-        {
-          isUserRegistered(email: "${mail}")
-        }
-    `;
+      {
+        isUserRegistered(mail: "${mail}")
+      }
+  `;
 
   useEffect(() => {
     if (mail !== '') {
@@ -57,5 +57,5 @@ export const useMailValidator = () => {
     setMailValidation(validationResponse);
   };
 
-  return [mailValidation, setEmail] as const;
+  return [mailValidation, setEmail, mail] as const;
 };

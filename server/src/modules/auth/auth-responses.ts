@@ -1,4 +1,32 @@
 import { ArgsType, Field, ObjectType } from 'type-graphql';
+import {User} from "../../entity/User";
+
+@ArgsType()
+export class LoginInput {
+  @Field()
+  mail: string;
+
+  @Field()
+  password: string;
+}
+
+@ObjectType()
+export class LoginResponse {
+  @Field()
+  user: User;
+
+  @Field()
+  token: string;
+}
+
+@ObjectType()
+  export class LoginErrors {
+    @Field({nullable: true})
+    passwordInvalid?: boolean;
+
+    @Field({nullable: true})
+    notRegistered?: boolean
+}
 
 @ObjectType()
 export class RegistrationErrors {
@@ -25,6 +53,10 @@ export class RegistrationErrors {
 export class RegistrationResponse {
   @Field()
   success: boolean;
+
+  @Field()
+  loginResponse: LoginResponse
+
 }
 
 @ArgsType()

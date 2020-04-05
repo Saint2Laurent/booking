@@ -25,9 +25,9 @@ const AppRouter = () => {
 
   return (
     <Layout style={{ height: '100vh' }}>
-      {!isInAuth && <NavHeader />}
+      {isInAuth && <NavHeader />}
       <Layout>
-        {!isInAuth && <NavSider />}
+        {isInAuth && <NavSider />}
         <Layout>
           <Content className="site-layout-background">
             <Switch>
