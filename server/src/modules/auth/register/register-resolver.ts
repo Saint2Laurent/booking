@@ -32,7 +32,7 @@ export class RegisterResolver {
     @Query(() => Boolean)
     async isUserRegistered(@Arg('mail') mail: string) {
         const user = await User.findOne({ mail });
-        if (!user) {
+        if (user) {
             return true;
         }
         return false;

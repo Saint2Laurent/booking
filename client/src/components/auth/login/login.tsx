@@ -9,19 +9,99 @@ import AuthHeader from '../auth-header';
 import { useDispatch } from 'react-redux';
 import { login } from '../../../store/authSlice';
 import { useHistory } from 'react-router-dom';
+import {gql} from "apollo-boost";
+import {useMutation} from "@apollo/react-hooks";
+import {isEmpty} from "../../../../../shared/utils/is-empty";
+
+const LIVR = require('livr');
+LIVR.Validator.defaultAutoTrim(true);
+
+const validator = new LIVR.Validator({
+  mail: ['required', 'email'],
+  password: ['required', { min_length: 5 }],
+});
+
 
 const Login = () => {
   const [form] = useForm();
   const dispatch = useDispatch();
   const history = useHistory();
   const [isFetchingGoogle, setIsFetchingGoogle] = useState(false);
+  const [password, setPassword] = useState('')
+  const [mail, setMail] = useState('')
+  const [mailError, setMailError] = useState('')
+  const [passwordError, setPasswordError] = useState('')
 
-  const finished = () => {};
+  const LOGIN_USER = gql`
+    mutation{
+      loginUser(mail: "${mail}", password: "${password}"){
+        ... on LoginResponse{
+          token
+          user{
+            id
+            mail
+            fullName
+            isConfirmed
+            role
+            isGoogle
+            googleId
+          }
+        }
+        ... on LoginErrors{
+          notRegistered
+          passwordInvalid
+        }
+      }
+    }
+  `
+
+  const [loginUser, { data, loading }] = useMutation(LOGIN_USER, { fetchPolicy: 'no-cache' });
+
+  const finished = () => {
+    loginUser()
+        .then((d)=>{
+          resetErrors()
+          const data = d.data
+          if(data.loginUser.__typename === "LoginErrors"){
+            console.log(data.loginUser)
+            if(data.loginUser.passwordInvalid){
+              setPasswordError('Ο κώδικος δεν είναι σωστός')
+            }
+            if(d.data.loginUser.notRegistered){
+              setMailError('Ο λογαριασμός δεν είναι εγγεγραμένος')
+            }
+          }
+          console.log(d)
+          if(data.loginUser.__typename === "LoginResponse"){
+            const { user, token } = data.loginUser
+            dispatch(login({ user, token }))
+          }
+
+        }).catch((e)=>{
+          console.log(e)
+    })
+  };
 
   const responseGoogle = (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
     setIsFetchingGoogle(false);
   };
-  const onMailChange = () => {};
+  const onMailChange = () => {
+    setMail(form.getFieldValue('mail'))
+  };
+
+  const onPasswordChange = () => {
+    setPassword(form.getFieldValue('password'))
+  }
+
+  const resetErrors = () => {
+    setPasswordError('')
+    setMailError('')
+  }
+
+  const isLoginInputValid = () => {
+    console.log(validator.validate({mail, password}))
+    return validator.validate({mail, password})
+  }
 
   return (
     <Row className={style.container}>
@@ -42,25 +122,25 @@ const Login = () => {
             </Row>
             <div className={style.loginContainer}>
               <Col span={24} className={'mr-1 mt-2 text-left'}>
-                <Form form={form} onFinish={finished}>
+                <Form form={form} onSubmitCapture={finished}>
                   <Row>
                     <Col span={24}>
-                      <Form.Item htmlFor={'email'} name="mail" hasFeedback className={style.authFormItem}>
+                      <Form.Item htmlFor={'email'} name="mail" hasFeedback validateStatus={isEmpty(mailError) ? '' : 'warning'} extra={isEmpty(mailError) ? '' : mailError} className={style.authFormItem}>
                         <Input onChange={onMailChange} autoFocus placeholder="Το email σας" />
                       </Form.Item>
                     </Col>
                   </Row>
                   <Row>
                     <Col span={24}>
-                      <Form.Item name="mail" hasFeedback>
-                        <Input.Password onChange={onMailChange} placeholder="Κώδικος" />
+                      <Form.Item name="password" hasFeedback validateStatus={isEmpty(passwordError) ? '' : 'warning'} extra={isEmpty(passwordError) ? '' : passwordError}>
+                        <Input.Password onChange={onPasswordChange} placeholder="Κώδικος" />
                       </Form.Item>
                     </Col>
                   </Row>
 
                   <Row className="mt-4">
-                    <Button htmlType={'submit'} block className={`${style.inputButton} auth-disabled`} type={'primary'}>
-                      Σύνεχεια
+                    <Button disabled={!validator.validate({mail, password})} loading={loading} htmlType={'submit'} block className={`${style.inputButton} auth-disabled`} type={'primary'}>
+                      Είσοδος
                     </Button>
                   </Row>
                   <Row>
@@ -94,13 +174,6 @@ const Login = () => {
                   </Row>
                   <Row className={'mt-4 text-smaller text-center'}>
                     <Col span={24} className="mt-4">
-                      {/*<button*/}
-                      {/*  onClick={() => {*/}
-                      {/*    dispatch(login({ history }));*/}
-                      {/*  }}*/}
-                      {/*>*/}
-                      {/*  Lowkey login*/}
-                      {/*</button>*/}
                       <hr />
                       <div className="mt-2">
                         Δέν έχετε λογαριασμό; <span className={'light-sky-blue'}>Εγγραφείτε</span>

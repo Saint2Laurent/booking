@@ -36,12 +36,15 @@ export class User extends BaseEntity {
   isConfirmed: boolean;
 
   @Field()
-  @Column({ default: true })
+  @Column({ default: false })
   isGoogle: boolean;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true })
   googleId?: string;
+
+  @Field({nullable: true})
+  profileImageUrl?: string;
 
   @Field(() => Role)
   @Column({ type: 'enum', enum: Role, default: Role.MASTER })

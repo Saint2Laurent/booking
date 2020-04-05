@@ -145,7 +145,12 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
                   height: 4,
                   alwaysVisible: true,
                   colorScheme: {
-                    levels: ['#ff4033', '#fe7439', '#59eb29', '#5df32b', '#67ff2f'],
+                    levels: [
+                      '#ff4033',
+                      '#fe9c63',
+                      '#62ea1f',
+                      '#59d41c',
+                      '#52c41a'],
                     noLevel: 'lightgrey'
                   }
                 }}
@@ -181,7 +186,7 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
             {
               registerSuccessful ?
                   <div className={style.redirectedSoon}>
-                    Θα ανακατευθεινειτε συντομα<Wave text="..." effect="verticalFadeIn" effectChange={.1} speed={2} />
+                    Εγγραφή επιτυχης! Ανακατευθηνση<Wave text="..." effect="verticalFadeIn" effectChange={.1} speed={2} />
                   </div>
                   :<span>Ή</span>
 
