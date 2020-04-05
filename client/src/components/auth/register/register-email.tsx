@@ -1,14 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import '../../../styles/global.scss';
 import style from '../auth.module.scss';
 import '@ant-design/compatible/assets/index.css';
 import googleIcon from '../../../assets/images/icon-google.svg';
 import { Form, Input, Button, Row, Col } from 'antd';
-import { isMailValid } from '../../../../../shared/validators/account-validator';
 import GoogleLogin from 'react-google-login';
 import { useMailValidator } from '../../../hooks/use-mail-validators';
-import {gql} from "apollo-boost";
-import {useMutation} from "@apollo/react-hooks";
 
 interface RegisterEmailProps {
   swapView(): any;

@@ -9,9 +9,11 @@ import AuthHeader from '../auth-header';
 import { useDispatch } from 'react-redux';
 import { login } from '../../../store/authSlice';
 import { useHistory } from 'react-router-dom';
-import {gql} from "apollo-boost";
 import {useMutation} from "@apollo/react-hooks";
 import {isEmpty} from "../../../../../shared/utils/is-empty";
+import { Wave } from 'react-animated-text';
+import { CheckOutlined } from '@ant-design/icons';
+import gql from "graphql-tag";
 
 const LIVR = require('livr');
 LIVR.Validator.defaultAutoTrim(true);
@@ -31,6 +33,7 @@ const Login = () => {
   const [mail, setMail] = useState('')
   const [mailError, setMailError] = useState('')
   const [passwordError, setPasswordError] = useState('')
+  const [loginSuccessful, setLoginSuccessful] = useState(false)
 
   const LOGIN_USER = gql`
     mutation{
@@ -73,6 +76,7 @@ const Login = () => {
           }
           console.log(d)
           if(data.loginUser.__typename === "LoginResponse"){
+            setLoginSuccessful(true)
             const { user, token } = data.loginUser
             dispatch(login({ user, token }))
           }
@@ -98,10 +102,7 @@ const Login = () => {
     setMailError('')
   }
 
-  const isLoginInputValid = () => {
-    console.log(validator.validate({mail, password}))
-    return validator.validate({mail, password})
-  }
+
 
   return (
     <Row className={style.container}>
@@ -139,39 +140,48 @@ const Login = () => {
                   </Row>
 
                   <Row className="mt-4">
-                    <Button disabled={!validator.validate({mail, password})} loading={loading} htmlType={'submit'} block className={`${style.inputButton} auth-disabled`} type={'primary'}>
+                    <Button icon={loginSuccessful && <CheckOutlined />} disabled={!validator.validate({mail, password}) || loginSuccessful} loading={loading} htmlType={'submit'} block className={`${style.inputButton} auth-disabled`} type={'primary'}>
                       Είσοδος
                     </Button>
                   </Row>
                   <Row>
-                    <Col span={24} className={'text-center'}>
-                      Ή
+                    <Col span={24} className={'text-center d-flex'}>
+                      {
+                        !loginSuccessful ?
+                            <span>Ή</span>
+                            :<div className={style.redirectedSoon}>
+                              Είσοδος επιτυχης! Ανακατευθηνση<Wave text="..." effect="verticalFadeIn" effectChange={.1} speed={2} />
+                            </div>
+                      }
                     </Col>
                   </Row>
-                  <Row>
-                    <GoogleLogin
-                      clientId="315458143733-80m56pstigk1t5q22i3fdrpa0jbvd570.apps.googleusercontent.com"
-                      render={renderProps => (
-                        <Button
-                          loading={isFetchingGoogle}
-                          id={'registerEmailGButton'}
-                          block
-                          className={style.inputButton}
-                          onClick={renderProps.onClick}
-                        >
-                          <img className={style.buttonIcon} src={googleIcon} alt="" />
-                          <span className="ml-1">Σύνεχεια με Google</span>
-                        </Button>
-                      )}
-                      buttonText="Είσοδος με Google"
-                      onRequest={() => {
-                        setIsFetchingGoogle(true);
-                      }}
-                      onSuccess={responseGoogle}
-                      onFailure={responseGoogle}
-                      cookiePolicy={'single_host_origin'}
-                    />
-                  </Row>
+                  {
+                    !loginSuccessful &&
+                    <Row>
+                      <GoogleLogin
+                          clientId="315458143733-80m56pstigk1t5q22i3fdrpa0jbvd570.apps.googleusercontent.com"
+                          render={renderProps => (
+                              <Button
+                                  loading={isFetchingGoogle}
+                                  id={'registerEmailGButton'}
+                                  block
+                                  className={style.inputButton}
+                                  onClick={renderProps.onClick}
+                              >
+                                <img className={style.buttonIcon} src={googleIcon} alt="" />
+                                <span className="ml-1">Σύνεχεια με Google</span>
+                              </Button>
+                          )}
+                          buttonText="Είσοδος με Google"
+                          onRequest={() => {
+                            setIsFetchingGoogle(true);
+                          }}
+                          onSuccess={responseGoogle}
+                          onFailure={responseGoogle}
+                          cookiePolicy={'single_host_origin'}
+                      />
+                    </Row>
+                  }
                   <Row className={'mt-4 text-smaller text-center'}>
                     <Col span={24} className="mt-4">
                       <hr />

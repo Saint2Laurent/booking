@@ -1,11 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { gql } from 'apollo-boost';
-import { useLazyQuery, useMutation } from '@apollo/react-hooks';
-
-interface AuthState {
-  isLoggedIn: boolean;
-  user: {};
-}
 
 export const slice = createSlice({
   name: 'auth',
@@ -22,6 +15,7 @@ export const slice = createSlice({
       state.isAuthenticated = true;
       state.user = action.payload.user;
       state.token = action.payload.token;
+      localStorage.setItem('token', action.payload.token);
     },
     logout: state => {
       state.isAuthenticated = false;

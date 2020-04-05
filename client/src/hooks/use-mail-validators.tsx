@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { gql } from 'apollo-boost';
 import { useQuery } from '@apollo/react-hooks';
 import { isMailValid } from '../../../shared/validators/account-validator';
 import { ValidationResponse } from '../../../shared/types/misc/validation-response';
+import gql from "graphql-tag";
 
 export const useMailValidator = () => {
   const [mailValidation, setMailValidation] = useState<ValidationResponse>({

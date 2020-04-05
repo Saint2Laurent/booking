@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 import { registerEnumType } from 'type-graphql';
 
-enum Role {
+export enum Role {
   MASTER,
   DESK,
   STAFF,

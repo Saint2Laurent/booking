@@ -1,4 +1,4 @@
-import {Args, createUnionType, Mutation, Resolver} from "type-graphql";
+import {Args, Authorized, createUnionType, Mutation, Resolver} from "type-graphql";
 import {LoginErrors, LoginInput, LoginResponse, RegistrationErrors, RegistrationResponse} from "../auth-responses";
 import {User} from "../../../entity/User";
 import {plainToClass} from "class-transformer";
@@ -20,7 +20,7 @@ export const logUser = (user: User): LoginResponse => {
 
 @Resolver()
 export class LoginResolver {
-
+    @Authorized()
     @Mutation(()=> RegisterResult)
     async loginUser(@Args() {mail, password}: LoginInput): Promise<typeof RegisterResult>{
         const loginErrors: LoginErrors = await validateLoginRequest({mail, password})

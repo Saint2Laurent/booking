@@ -28,7 +28,6 @@ function sleep(ms:number) {
 @Resolver()
 export class RegisterResolver {
 
-
     @Query(() => Boolean)
     async isUserRegistered(@Arg('mail') mail: string) {
         const user = await User.findOne({ mail });
@@ -37,7 +36,6 @@ export class RegisterResolver {
         }
         return false;
     }
-
 
 
     @Mutation(() => RegisterResponse)

@@ -26,7 +26,7 @@
       <option name="checkSyntaxErrors" value="true" />
       <option name="description" />
       <option name="exitCodeBehavior" value="ERROR" />
-      <option name="fileExtension" value="jsx" />
+      <option name="fileExtension" value="ts" />
       <option name="immediateSync" value="true" />
       <option name="name" value="" />
       <option name="output" value="" />
