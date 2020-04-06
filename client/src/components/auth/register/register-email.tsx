@@ -12,13 +12,9 @@ interface RegisterEmailProps {
   setMail(email: string): any;
 }
 
-
-
-
-
 export const RegisterEmail: React.FC<RegisterEmailProps> = ({ swapView, setMail }: RegisterEmailProps) => {
   const [form] = Form.useForm();
-  const [validationResponse, setEmail] = useMailValidator();
+  const [validationResponse, setEmail] = useMailValidator(null, null);
   const googleButtonRef: any = useRef();
 
   const blockTabOnGoogleButton = (e: any) => {
@@ -39,7 +35,7 @@ export const RegisterEmail: React.FC<RegisterEmailProps> = ({ swapView, setMail 
   };
 
   const onMailChange = () => {
-    setEmail(form.getFieldValue('mail'));
+    // setEmail(form.getFieldValue('mail'));
   };
 
   const responseGoogle = (r: any) => {};
@@ -52,8 +48,8 @@ export const RegisterEmail: React.FC<RegisterEmailProps> = ({ swapView, setMail 
             <Form.Item
               name="mail"
               hasFeedback
-              validateStatus={validationResponse.formValidationStatus}
-              help={validationResponse.errorMessage}
+              // validateStatus={validationResponse.formValidationStatus}
+              // help={validationResponse.errorMessage}
             >
               <Input onChange={onMailChange} placeholder="Λογαριασμός email" />
             </Form.Item>
@@ -71,7 +67,7 @@ export const RegisterEmail: React.FC<RegisterEmailProps> = ({ swapView, setMail 
             htmlType={'submit'}
             block
             className={`${style.inputButton} auth-disabled`}
-            disabled={!validationResponse.isValid}
+            // disabled={!validationResponse.isValid}
             type={'primary'}
           >
             Σύνεχεια

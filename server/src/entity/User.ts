@@ -1,13 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 import { registerEnumType } from 'type-graphql';
-
-export enum Role {
-  MASTER,
-  DESK,
-  STAFF,
-  CUSTOMER
-}
+import {Role, User as UserInterface} from '../../../shared/types/entity/User'
 
 registerEnumType(Role, {
   name: 'Role'
@@ -15,7 +9,7 @@ registerEnumType(Role, {
 
 @ObjectType()
 @Entity()
-export class User extends BaseEntity {
+export class User extends BaseEntity implements UserInterface{
   @Field(() => ID)
   @PrimaryGeneratedColumn('uuid')
   id: string;

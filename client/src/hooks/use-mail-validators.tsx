@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from '@apollo/react-hooks';
-import { isMailValid } from '../../../shared/validators/account-validator';
+import { isMailValid } from '../../../shared/validators/auth/common-auth-validator';
 import { ValidationResponse } from '../../../shared/types/misc/validation-response';
-import gql from "graphql-tag";
+import gql from 'graphql-tag';
 
-export const useMailValidator = () => {
+export const useMailValidator = (formValidationInfo, setFormValidationInfo) => {
   const [mailValidation, setMailValidation] = useState<ValidationResponse>({
     isValid: false
   });
@@ -22,13 +22,13 @@ export const useMailValidator = () => {
 
   useEffect(() => {
     if (mail !== '') {
-      validate();
+      isMailValid(mail);
     }
   }, [mail]);
 
   useQuery(IS_MAIL_REGISTERED, {
     fetchPolicy: 'no-cache',
-    skip: !isMailValid(mail).isValid,
+    skip: !isMailValid(mail),
     onCompleted: d => {
       console.log(d);
       queryResolved(d);
@@ -37,25 +37,23 @@ export const useMailValidator = () => {
 
   const queryResolved = (d: TData) => {
     if (d.isUserRegistered) {
-      setMailValidation({
-        isValid: false,
-        errorMessage: 'Το email υπαρχει ηδη',
-        formValidationStatus: 'warning'
+      setFormValidationInfo({
+        ...formValidationInfo,
+        mail: {
+          status: 'warning',
+          message: 'Το mail υπαρχει ηδη'
+        }
       });
     } else {
-      setMailValidation({
-        isValid: true,
-        errorMessage: '',
-        formValidationStatus: 'success'
+      setFormValidationInfo({
+        ...formValidationInfo,
+        mail: {
+          status: 'success',
+          message: ''
+        }
       });
     }
   };
 
-  const validate = () => {
-    console.log('validating');
-    const validationResponse = isMailValid(mail);
-    setMailValidation(validationResponse);
-  };
-
-  return [mailValidation, setEmail, mail] as const;
+  return [setEmail, mail] as const;
 };

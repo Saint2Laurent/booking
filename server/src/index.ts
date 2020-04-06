@@ -51,7 +51,6 @@ const initServer = async () => {
             }
           }
         }
-
       }
       return {}
     },

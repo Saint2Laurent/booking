@@ -20,7 +20,6 @@ export const logUser = (user: User): LoginResponse => {
 
 @Resolver()
 export class LoginResolver {
-    @Authorized()
     @Mutation(()=> RegisterResult)
     async loginUser(@Args() {mail, password}: LoginInput): Promise<typeof RegisterResult>{
         const loginErrors: LoginErrors = await validateLoginRequest({mail, password})

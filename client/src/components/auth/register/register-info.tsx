@@ -3,8 +3,11 @@ import style from '../auth.module.scss';
 import { Form, Input, Button, Row, Col } from 'antd';
 import '@ant-design/compatible/assets/index.css';
 import googleIcon from '../../../assets/images/icon-google.svg';
-import { PasswordInput } from 'antd-password-input-strength';
-import { isFullNameValid, isPasswordValid, isAccountValid } from '../../../../../shared/validators/account-validator';
+import {
+  factorFormValidationInfo,
+  RegisterFormValidationInfo,
+  validateRegistrationInput
+} from '../../../../../shared/validators/auth/common-auth-validator';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { isEmpty } from '../../../../../shared/utils/is-empty';
 import { useMailValidator } from '../../../hooks/use-mail-validators';
@@ -22,9 +25,24 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
   const recaptchaRef: RefObject<ReCAPTCHA> = React.createRef<ReCAPTCHA>();
   const [form] = Form.useForm();
   const fullNameRef: any = useRef();
-  const [validationResponse, setEmail, email] = useMailValidator();
   const [fullName, setFullName] = useState('');
   const [password, setPassword] = useState('');
+  const [formValidationInfo, setFormValidationInfo] = useState<RegisterFormValidationInfo>({
+    mail: {
+      status: '',
+      message: ''
+    },
+    fullName: {
+      status: '',
+      message: ''
+    },
+    password: {
+      status: '',
+      message: ''
+    }
+  });
+
+  const [setEmail, email] = useMailValidator(formValidationInfo, setFormValidationInfo);
 
   const REGISTER_USER = gql`
      mutation {
@@ -49,15 +67,13 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
 `;
 
   const [registerUser, { data, loading }] = useMutation(REGISTER_USER, { fetchPolicy: 'no-cache' });
-  const [registerSuccessful, setRegisterSuccessful] = useState(false)
-
-  useEffect(() => {}, []);
+  const [registerSuccessful, setRegisterSuccessful] = useState(false);
 
   const register = e => {
     registerUser()
       .then(d => {
-        if(d.data.registerUser.__typename === 'RegistrationResponse' && d.data.registerUser.success){
-            setRegisterSuccessful(true)
+        if (d.data.registerUser.__typename === 'RegistrationResponse' && d.data.registerUser.success) {
+          setRegisterSuccessful(true);
         }
         console.log(d);
       })
@@ -68,12 +84,16 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
 
   useEffect(() => {
     if (initView) {
-      form.setFieldsValue({ mail });
+      // form.setFieldsValue({ mail });
       if (!isEmpty(mail)) {
         fullNameRef.current.focus();
       }
     }
   }, [mail]);
+
+  useEffect(() => {
+    setFormValidationInfo(factorFormValidationInfo(form, validateRegistrationInput(email, fullName, password)));
+  }, [email, password, fullName]);
 
   const onMailChange = () => {
     console.log(form.getFieldValue('mail'));
@@ -90,14 +110,14 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
 
   return (
     <Col span={24} className={'text-left p-1 mt-4'}>
-      <Form form={form} onSubmitCapture={register} >
+      <Form form={form} onSubmitCapture={register}>
         <Row>
           <Col span={24}>
             <Form.Item
               name="mail"
               hasFeedback
-              validateStatus={form.isFieldTouched('mail') ? validationResponse.formValidationStatus : ''}
-              extra={form.isFieldTouched('mail') ? validationResponse.errorMessage : ''}
+              validateStatus={formValidationInfo.mail.status}
+              extra={formValidationInfo.mail.message}
             >
               <Input onChange={onMailChange} placeholder="Λογαριασμός email" />
             </Form.Item>
@@ -109,14 +129,8 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
             <Form.Item
               name="fullName"
               hasFeedback
-              validateStatus={
-                form.isFieldTouched('fullName')
-                  ? isFullNameValid(form.getFieldValue('fullName')).formValidationStatus
-                  : ''
-              }
-              extra={
-                form.isFieldTouched('fullName') ? isFullNameValid(form.getFieldValue('fullName')).errorMessage : ''
-              }
+              validateStatus={formValidationInfo.fullName.status}
+              extra={formValidationInfo.fullName.message}
             >
               <Input ref={fullNameRef} onChange={onFullNameChange} placeholder="Πλήρες όνομα" />
             </Form.Item>
@@ -130,31 +144,10 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
               className={'auth-password-input'}
               name={'password'}
               hasFeedback
-              validateStatus={
-                form.isFieldTouched('password')
-                  ? isPasswordValid(form.getFieldValue('password')).formValidationStatus
-                  : ''
-              }
-              extra={
-                form.isFieldTouched('password') ? isPasswordValid(form.getFieldValue('password')).errorMessage : ''
-              }
+              validateStatus={formValidationInfo.password.status}
+              extra={formValidationInfo.password.message}
             >
-              <PasswordInput
-                onChange={onPasswordChange}
-                settings={{
-                  height: 4,
-                  alwaysVisible: true,
-                  colorScheme: {
-                    levels: [
-                      '#ff4033',
-                      '#fe9c63',
-                      '#62ea1f',
-                      '#59d41c',
-                      '#52c41a'],
-                    noLevel: 'lightgrey'
-                  }
-                }}
-              />
+              <Input.Password onChange={onPasswordChange} />
             </Form.Item>
           </Col>
         </Row>
@@ -165,45 +158,41 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
             htmlType={'submit'}
             block
             className={`${style.inputButton} auth-disabled`}
-              icon={registerSuccessful && <CheckOutlined />}
-            disabled={
-              !isAccountValid({
-                mail: form.getFieldValue('mail'),
-                password: form.getFieldValue('password'),
-                fullName: form.getFieldValue('fullName')
-              }) || registerSuccessful
-            }
+            icon={registerSuccessful && <CheckOutlined />}
+            // disabled={
+            //   !isAccountValid({
+            //     mail: form.getFieldValue('mail'),
+            //     password: form.getFieldValue('password'),
+            //     fullName: form.getFieldValue('fullName')
+            //   }) || registerSuccessful
+            // }
             type={'primary'}
           >
-            {
-              !registerSuccessful ? <span>Σύνεχεια</span> : <span className='pulse'>Εγγραφή επιτυχής</span>
-            }
+            {!registerSuccessful ? <span>Σύνεχεια</span> : <span className="pulse">Εγγραφή επιτυχής</span>}
           </Button>
         </Row>
 
         <Row className={'text-center'}>
           <Col span={24}>
-            {
-              registerSuccessful ?
-                  <div className={style.redirectedSoon}>
-                    Εγγραφή επιτυχης! Ανακατευθηνση<Wave text="..." effect="verticalFadeIn" effectChange={.1} speed={2} />
-                  </div>
-                  :<span>Ή</span>
-
-            }
-
+            {registerSuccessful ? (
+              <div className={style.redirectedSoon}>
+                Εγγραφή επιτυχης! Ανακατευθηνση
+                <Wave text="..." effect="verticalFadeIn" effectChange={0.1} speed={2} />
+              </div>
+            ) : (
+              <span>Ή</span>
+            )}
           </Col>
         </Row>
 
-        {
-          !registerSuccessful &&
+        {!registerSuccessful && (
           <Row>
             <Button block className={style.inputButton}>
               <img className={style.buttonIcon} src={googleIcon} alt="" />
               <span className="ml-1">Σύνεχεια με Google</span>
             </Button>
           </Row>
-        }
+        )}
 
         <Row className={'mt-4 text-smaller text-center'}>
           <Col span={24}>

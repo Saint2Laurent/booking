@@ -24,7 +24,6 @@ const headerLink = setContext((request, previousContext) => ({
 }));
 
 const client = new ApolloClient({
-
     cache: new InMemoryCache({
         fragmentMatcher
     }),
@@ -34,8 +33,6 @@ const client = new ApolloClient({
             Authorization: 'Bearer ' + localStorage.getItem('token')
         }
     }).concat(headerLink),
-
-
 });
 
 ReactDOM.render(

@@ -1,6 +1,5 @@
 import {AuthChecker} from "type-graphql";
-import {Role} from "../../entity/User";
-import {isEmpty} from "../../../../shared/utils/is-empty";
+import {Role} from "../../../../shared/types/entity/User";
 
 
 interface Context {
@@ -10,7 +9,6 @@ interface Context {
 
 export const authChecker: AuthChecker<Context> = ({ context: { userId, role } }, roles) => {
 
-    console.log(userId)
 
     if(roles.length === 0 && userId){
         return true

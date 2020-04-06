@@ -1,8 +1,9 @@
 import { ArgsType, Field, ObjectType } from 'type-graphql';
 import {User} from "../../entity/User";
+import { LoginInput as LoginInputInterface, LoginResponse as LoginResponseInterface, LoginErrors as LoginErrorsInterface, RegistrationErrors as RegistrationErrorsInterface, RegistrationResponse as RegistrationResponseInterface, RegistrationInput as RegistrationInputInterface} from "../../../../shared/types/api/auth/auth-responses";
 
 @ArgsType()
-export class LoginInput {
+export class LoginInput implements LoginInputInterface{
   @Field()
   mail: string;
 
@@ -11,7 +12,7 @@ export class LoginInput {
 }
 
 @ObjectType()
-export class LoginResponse {
+export class LoginResponse implements LoginResponseInterface{
   @Field()
   user: User;
 
@@ -19,8 +20,9 @@ export class LoginResponse {
   token: string;
 }
 
+
 @ObjectType()
-  export class LoginErrors {
+export class LoginErrors implements LoginErrorsInterface{
     @Field({nullable: true})
     passwordInvalid?: boolean;
 
@@ -29,9 +31,7 @@ export class LoginResponse {
 }
 
 @ObjectType()
-export class RegistrationErrors {
-  @Field({ nullable: true })
-  hashingFailed?: string;
+export class RegistrationErrors implements RegistrationErrorsInterface{
 
   @Field({ nullable: true })
   mailInvalid?: boolean;
@@ -50,17 +50,16 @@ export class RegistrationErrors {
 }
 
 @ObjectType()
-export class RegistrationResponse {
+export class RegistrationResponse implements RegistrationResponseInterface{
   @Field()
   success: boolean;
 
   @Field()
   loginResponse: LoginResponse
-
 }
 
 @ArgsType()
-export class RegisterInput {
+export class RegistrationInput implements RegistrationInputInterface{
   @Field()
   fullName: string;
 

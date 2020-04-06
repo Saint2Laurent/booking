@@ -1,7 +1,7 @@
 import { Query, Resolver, Arg, Mutation, Args, createUnionType } from 'type-graphql';
 import { plainToClass } from 'class-transformer';
 import { User } from '../../../entity/User';
-import {LoginResponse, RegisterInput, RegistrationErrors, RegistrationResponse} from '../auth-responses';
+import {LoginResponse, RegistrationInput, RegistrationErrors, RegistrationResponse} from '../auth-responses';
 import { RegisterConfirmation } from '../../../entity/RegisterConfirmation';
 import { v4 as uuid } from 'uuid';
 import { sendConfirmationMail } from '../../../utils/mail/mailer';
@@ -39,7 +39,7 @@ export class RegisterResolver {
 
 
     @Mutation(() => RegisterResponse)
-    async registerUser(@Args() { fullName, mail, password }: RegisterInput): Promise<typeof RegisterResponse> {
+    async registerUser(@Args() { fullName, mail, password }: RegistrationInput): Promise<typeof RegisterResponse> {
         await sleep(750);
         const user = await User.findOne({ mail: mail });
         let registrationErrors: RegistrationErrors = validateRegisterRequest({fullName, mail, password}, user);
