@@ -49,7 +49,7 @@ export class RegisterResolver {
     const newUser = await User.create({ mail, password: hashedPassword, fullName }).save();
 
     const confirmation = await RegisterConfirmation.create({ mail, token: uuid() }).save();
-    sendConfirmationMail(newUser, confirmation.token);
+    // sendConfirmationMail(newUser, confirmation.token);
 
     return plainToClass(RegistrationResponse, { success: true, loginResponse: logUser(newUser) });
   }

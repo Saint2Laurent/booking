@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import '../../../styles/global.scss';
 import style from '../auth.module.scss';
 import '@ant-design/compatible/assets/index.css';
@@ -6,16 +6,28 @@ import googleIcon from '../../../assets/images/icon-google.svg';
 import { Form, Input, Button, Row, Col } from 'antd';
 import GoogleLogin from 'react-google-login';
 import { useMailValidator } from '../../../hooks/use-mail-validators';
+import {
+  FormValidationInfoField,
+  isMailValid,
+  validateRegistrationInput
+} from '../../../../../shared/validators/auth/common-auth-validator';
 
 interface RegisterEmailProps {
   swapView(): any;
   setMail(email: string): any;
 }
 
+interface RegisterEmailViewErrors {
+  mailInvalid?: boolean;
+  _mailExists?: boolean;
+}
+
 export const RegisterEmail: React.FC<RegisterEmailProps> = ({ swapView, setMail }: RegisterEmailProps) => {
   const [form] = Form.useForm();
-  const [validationResponse, setEmail] = useMailValidator(null, null);
   const googleButtonRef: any = useRef();
+  const [registrationErrors, setRegistrationErrors] = useState<RegisterEmailViewErrors>({});
+  const [setEmail, email] = useMailValidator(registrationErrors, setRegistrationErrors);
+  const [formValidationInfo, setFormValidationInfo] = useState<FormValidationInfoField>({ status: '', message: '' });
 
   const blockTabOnGoogleButton = (e: any) => {
     if (e.key === 'Tab') {
@@ -35,8 +47,28 @@ export const RegisterEmail: React.FC<RegisterEmailProps> = ({ swapView, setMail 
   };
 
   const onMailChange = () => {
-    // setEmail(form.getFieldValue('mail'));
+    setEmail(form.getFieldValue('mail'));
   };
+
+  useEffect(() => {
+    if (form.isFieldTouched('mail')) {
+      if (registrationErrors._mailExists) {
+        setFormValidationInfo({ status: 'warning', message: 'Το email υπαρχει ηδη' });
+      } else if (registrationErrors.mailInvalid) {
+        setFormValidationInfo({ status: 'warning', message: 'Το email δεν ειναι σωστο' });
+      } else {
+        setFormValidationInfo({ status: 'success', message: '' });
+      }
+    }
+  }, [registrationErrors]);
+
+  useEffect(() => {
+    if (!isMailValid(email)) {
+      setRegistrationErrors({ mailInvalid: true });
+    } else {
+      setRegistrationErrors({});
+    }
+  }, [email]);
 
   const responseGoogle = (r: any) => {};
 
@@ -48,8 +80,8 @@ export const RegisterEmail: React.FC<RegisterEmailProps> = ({ swapView, setMail 
             <Form.Item
               name="mail"
               hasFeedback
-              // validateStatus={validationResponse.formValidationStatus}
-              // help={validationResponse.errorMessage}
+              validateStatus={formValidationInfo.status}
+              help={formValidationInfo.message}
             >
               <Input onChange={onMailChange} placeholder="Λογαριασμός email" />
             </Form.Item>
@@ -67,7 +99,7 @@ export const RegisterEmail: React.FC<RegisterEmailProps> = ({ swapView, setMail 
             htmlType={'submit'}
             block
             className={`${style.inputButton} auth-disabled`}
-            // disabled={!validationResponse.isValid}
+            disabled={Object.keys(registrationErrors).length !== 0}
             type={'primary'}
           >
             Σύνεχεια

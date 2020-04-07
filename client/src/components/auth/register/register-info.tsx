@@ -18,6 +18,7 @@ import { CheckOutlined } from '@ant-design/icons';
 import { Wave } from 'react-animated-text';
 import { useToasts } from 'react-toast-notifications';
 import { RegistrationErrors } from '../../../../../shared/types/api/auth/auth-responses';
+import { xor } from '../../../../../shared/utils/boole';
 
 interface RegisterInfoProps {
   mail: string;
@@ -91,7 +92,8 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
 
   useEffect(() => {
     if (initView) {
-      // form.setFieldsValue({ mail });
+      form.setFieldsValue({ mail });
+      setEmail(mail);
       if (!isEmpty(mail)) {
         fullNameRef.current.focus();
       }
@@ -115,9 +117,16 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
   }, [registrationErrors]);
 
   useEffect(() => {
-    const _mailExists = registrationErrors._mailExists;
-    setRegistrationErrors({ _mailExists, ...validateRegistrationInput(email, fullName, password) });
+    let errors: RegistrationErrors = {};
+    if (registrationErrors._mailExists !== undefined) {
+      errors._mailExists = registrationErrors._mailExists;
+    }
+    setRegistrationErrors({ ...errors, ...validateRegistrationInput(email, fullName, password) });
   }, [email, password, fullName]);
+
+  const disableRegistration = () => {
+    return Object.keys(registrationErrors).length !== 0 || registerSuccessful;
+  };
 
   return (
     <Col span={24} className={'text-left p-1 mt-4'}>
@@ -167,7 +176,7 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
           <Button
             loading={loading}
             htmlType={'submit'}
-            disabled={Object.keys(registrationErrors).length === 0 ? false : true}
+            disabled={disableRegistration()}
             block
             className={`${style.inputButton} auth-disabled`}
             icon={registerSuccessful && <CheckOutlined />}

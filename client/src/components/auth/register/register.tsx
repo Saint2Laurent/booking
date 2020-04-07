@@ -43,10 +43,10 @@ const Register = () => {
             </Row>
             <div className={style.slideContainer} ref={sliderRef}>
               <CSSTransition appear timeout={600} in={initView} classNames="swapViews">
-                <RegisterInfo initView={initView} mail={mail} />
+                <RegisterEmail swapView={swapView} setMail={setMail} />
               </CSSTransition>
               <CSSTransition timeout={900} in={!initView} classNames={'swapViews'}>
-                <RegisterEmail swapView={swapView} setMail={setMail} />
+                <RegisterInfo initView={initView} mail={mail} />
               </CSSTransition>
             </div>
           </Col>
