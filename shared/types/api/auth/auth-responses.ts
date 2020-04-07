@@ -1,5 +1,11 @@
 import { User } from '../../entity/User';
 
+export interface ForgotPasswordErrors {
+  mailInvalid?: boolean;
+  _mailNotRegistered?: boolean;
+  _tooManyAttempts?: boolean;
+}
+
 export interface LoginInput {
   mail: string;
   password: string;

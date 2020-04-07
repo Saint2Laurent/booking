@@ -4,8 +4,9 @@ import { isMailValid } from '../../../shared/validators/auth/common-auth-validat
 import { ValidationResponse } from '../../../shared/types/misc/validation-response';
 import gql from 'graphql-tag';
 
-export const useMailValidator = (registrationErrors, setRegistrationErrors) => {
+export const useMailValidator = (registrationErrors?, setRegistrationErrors?) => {
   const [mail, setEmail] = useState('');
+  const [isRegistered, setIsRegistered] = useState(false);
 
   interface TData {
     isUserRegistered: boolean;
@@ -27,16 +28,20 @@ export const useMailValidator = (registrationErrors, setRegistrationErrors) => {
     fetchPolicy: 'no-cache',
     skip: !isMailValid(mail),
     onCompleted: d => {
-      console.log(d);
       queryResolved(d);
     }
   });
 
   const queryResolved = (d: TData) => {
     if (d.isUserRegistered) {
-      setRegistrationErrors({ ...registrationErrors, _mailExists: true });
+      setIsRegistered(true);
+      if (registrationErrors !== undefined) {
+        setRegistrationErrors({ ...registrationErrors, _mailExists: true });
+      }
+    } else {
+      setIsRegistered(false);
     }
   };
 
-  return [setEmail, mail] as const;
+  return [setEmail, mail, isRegistered] as const;
 };

@@ -12,6 +12,7 @@ import { selectAuth } from '../../store/authSlice';
 import { BrowserRouter as Router } from 'react-router-dom';
 import Dashboard from '../dashboard/dashboard';
 import useIsInAuth from '../../hooks/use-is-in-auth';
+import ForgotPassword from '../auth/forgot-password/forgot-password';
 
 const AppRouter = () => {
   const { Content } = Layout;
@@ -36,6 +37,9 @@ const AppRouter = () => {
               </Route>
               <Route path="/auth/register">
                 <Register />
+              </Route>
+              <Route path="/auth/forgot-password">
+                <ForgotPassword />
               </Route>
               <Route path="/" exact>
                 <Dashboard />
