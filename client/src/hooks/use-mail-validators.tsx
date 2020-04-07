@@ -4,10 +4,7 @@ import { isMailValid } from '../../../shared/validators/auth/common-auth-validat
 import { ValidationResponse } from '../../../shared/types/misc/validation-response';
 import gql from 'graphql-tag';
 
-export const useMailValidator = (formValidationInfo, setFormValidationInfo) => {
-  const [mailValidation, setMailValidation] = useState<ValidationResponse>({
-    isValid: false
-  });
+export const useMailValidator = (registrationErrors, setRegistrationErrors) => {
   const [mail, setEmail] = useState('');
 
   interface TData {
@@ -37,21 +34,7 @@ export const useMailValidator = (formValidationInfo, setFormValidationInfo) => {
 
   const queryResolved = (d: TData) => {
     if (d.isUserRegistered) {
-      setFormValidationInfo({
-        ...formValidationInfo,
-        mail: {
-          status: 'warning',
-          message: 'Το mail υπαρχει ηδη'
-        }
-      });
-    } else {
-      setFormValidationInfo({
-        ...formValidationInfo,
-        mail: {
-          status: 'success',
-          message: ''
-        }
-      });
+      setRegistrationErrors({ ...registrationErrors, _mailExists: true });
     }
   };
 

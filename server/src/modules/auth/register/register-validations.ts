@@ -1,38 +1,27 @@
-import {User} from "../../../entity/User";
-import {RegistrationErrors} from "../auth-responses";
-import {plainToClass} from "class-transformer";
+import { User } from '../../../entity/User';
+import { RegistrationErrors } from '../auth-responses';
+import { plainToClass } from 'class-transformer';
+import { validateRegistrationInput } from '../../../../../shared/validators/auth/common-auth-validator';
 const zxcvbn = require('zxcvbn');
-const validator = require('validator')
+const validator = require('validator');
 
 interface RegistrationArgs {
-    fullName: string;
-    password: string;
-    mail: string;
+  mail: string;
+  fullName: string;
+  password: string;
 }
 
 export const validateRegisterRequest = (credentials: RegistrationArgs, user?: User): RegistrationErrors => {
-    const registrationErrors: RegistrationErrors = {};
-    const { password, mail, fullName } = credentials;
+  const { mail, fullName, password } = credentials;
+  const registrationErrors: RegistrationErrors = { ...validateRegistrationInput(mail, fullName, password) };
 
-    if (user) {
-        if (!user.isConfirmed) {
-            registrationErrors.mailNeedsConfirmation = true;
-        } else {
-            registrationErrors.mailExists = true;
-        }
-    }
+  if (user) {
+    registrationErrors._mailExists = true;
+  }
 
-    if (zxcvbn(credentials.password).score < 2) {
-        registrationErrors.passwordInvalid = true;
-    }
+  if (zxcvbn(credentials.password).score < 2) {
+    registrationErrors._passwordWeak = true;
+  }
 
-    if (!validator.isEmail(mail)) {
-        registrationErrors.mailInvalid = true;
-    }
-
-    if (!/[^%]{3,}/g.test(fullName)) {
-        registrationErrors.fullNameInvalid = true;
-    }
-
-    return registrationErrors
-}
+  return registrationErrors;
+};

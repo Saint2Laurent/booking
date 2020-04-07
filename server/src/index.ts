@@ -4,12 +4,11 @@ import { buildSchema } from 'type-graphql';
 import Express from 'express';
 import { createConnection } from 'typeorm';
 import { User } from './entity/User';
-import RegisterResolver from "./modules/auth/register/register-resolver";
-import {authChecker} from "./modules/auth/auth-middleware";
+import RegisterResolver from './modules/auth/register/register-resolver';
+import { authChecker } from './modules/auth/auth-middleware';
 require('dotenv').config();
 
-const jwt = require('jsonwebtoken')
-
+const jwt = require('jsonwebtoken');
 
 const app = Express();
 let schema: any;
@@ -39,23 +38,23 @@ const initServer = async () => {
   await stitchSchema();
 
   const apolloServer = new ApolloServer({
-    context: async ({req}) => {
-      if(req.headers.authorization){
-        const token = req.headers.authorization.split('Bearer ')[1]
-        if(token !== 'null'){
-          const tokenInfo = jwt.verify(token, process.env.JWT_SECRET)
-          if(Math.floor(Date.now() / 1000) < tokenInfo.exp){
-            const user = await User.findOne({id: tokenInfo.id})
-            if(user){
-              return {userId: tokenInfo.id, role: user.role}
+    context: async ({ req }) => {
+      if (req.headers.authorization) {
+        const token = req.headers.authorization.split('Bearer ')[1];
+        if (token !== 'null') {
+          const tokenInfo = jwt.verify(token, process.env.JWT_SECRET);
+          if (Math.floor(Date.now() / 1000) < tokenInfo.exp) {
+            const user = await User.findOne({ id: tokenInfo.id });
+            if (user) {
+              return { userId: tokenInfo.id, role: user.role };
             }
           }
         }
       }
-      return {}
+      return {};
     },
     schema
-    });
+  });
 
   apolloServer.applyMiddleware({
     app,
@@ -63,7 +62,7 @@ const initServer = async () => {
       credentials: true,
       origin: true
     },
-    path: "/"
+    path: '/'
   });
 
   app.listen(process.env.PORT, () => {

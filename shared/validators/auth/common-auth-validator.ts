@@ -31,6 +31,7 @@ export const isPasswordAdequate = (password: string): boolean => {
 
 export const validateRegistrationInput = (mail, fullName, password): RegistrationErrors => {
   let registrationErrors: RegistrationErrors = {};
+  console.log(mail, isMailValid(mail));
   if (!isMailValid(mail)) {
     registrationErrors.mailInvalid = true;
   }
@@ -43,14 +44,15 @@ export const validateRegistrationInput = (mail, fullName, password): Registratio
   return registrationErrors;
 };
 
-export const factorFormValidationInfo = (form, formErrors: RegistrationErrors): RegisterFormValidationInfo => {
+export const factorFormValidationInfo = (form, registrationErrors: RegistrationErrors): RegisterFormValidationInfo => {
   let mailFormInfo: FormValidationInfoField = { status: '', message: '' };
+  console.log('mailInvalid: ', registrationErrors.mailInvalid);
 
   if (form.isFieldTouched('mail')) {
-    if (formErrors.mailInvalid) {
-      mailFormInfo = { status: 'warning', message: 'Το email δεν ειναι σωστο' };
-    } else if (formErrors._mailExists) {
+    if (registrationErrors._mailExists) {
       mailFormInfo = { status: 'warning', message: 'Το email υπαρχει ηδη' };
+    } else if (registrationErrors.mailInvalid) {
+      mailFormInfo = { status: 'warning', message: 'Το email δεν ειναι σωστο' };
     } else {
       mailFormInfo.status = 'success';
     }
@@ -59,7 +61,7 @@ export const factorFormValidationInfo = (form, formErrors: RegistrationErrors): 
   let fullNameFormInfo: FormValidationInfoField = { status: '', message: '' };
 
   if (form.isFieldTouched('fullName')) {
-    if (formErrors.fullNameInvalid) {
+    if (registrationErrors.fullNameInvalid) {
       fullNameFormInfo = { status: 'warning', message: 'Το πληρες ονομα δεν ειναι σωστο' };
     } else {
       fullNameFormInfo.status = 'success';
@@ -69,8 +71,10 @@ export const factorFormValidationInfo = (form, formErrors: RegistrationErrors): 
   let passwordFormInfo: FormValidationInfoField = { status: '', message: '' };
 
   if (form.isFieldTouched('password')) {
-    if (formErrors.passwordInadequate) {
+    if (registrationErrors.passwordInadequate) {
       passwordFormInfo = { status: 'warning', message: 'Ο κώδικος δεν ειναι αρκετός' };
+    } else if (registrationErrors._passwordWeak) {
+      passwordFormInfo = { status: 'warning', message: 'Ο κώδικος δεν ειναι αρκετα δυνατος' };
     } else {
       passwordFormInfo.status = 'success';
     }

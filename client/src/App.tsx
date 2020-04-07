@@ -7,8 +7,7 @@ import useOnlineStatus from './hooks/use-is-online';
 import useToken from './hooks/use-token';
 import { useSelector } from 'react-redux';
 import { selectAuth } from './store/authSlice';
-
-
+import { ToastProvider } from 'react-toast-notifications';
 
 const App = () => {
   let isOnline = useOnlineStatus();
@@ -23,9 +22,11 @@ const App = () => {
 
   return (
     <React.Fragment>
-      <Router>
-        <AppRouter />
-      </Router>
+      <ToastProvider>
+        <Router>
+          <AppRouter />
+        </Router>
+      </ToastProvider>
     </React.Fragment>
   );
 };

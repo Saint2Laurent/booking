@@ -30,5 +30,6 @@ export interface RegistrationErrors {
   mailInvalid?: boolean;
   fullNameInvalid?: boolean;
   passwordInadequate?: boolean;
+  _passwordWeak?: boolean;
   _mailExists?: boolean;
 }

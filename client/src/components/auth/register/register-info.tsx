@@ -5,6 +5,7 @@ import '@ant-design/compatible/assets/index.css';
 import googleIcon from '../../../assets/images/icon-google.svg';
 import {
   factorFormValidationInfo,
+  isMailValid,
   RegisterFormValidationInfo,
   validateRegistrationInput
 } from '../../../../../shared/validators/auth/common-auth-validator';
@@ -15,6 +16,8 @@ import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { CheckOutlined } from '@ant-design/icons';
 import { Wave } from 'react-animated-text';
+import { useToasts } from 'react-toast-notifications';
+import { RegistrationErrors } from '../../../../../shared/types/api/auth/auth-responses';
 
 interface RegisterInfoProps {
   mail: string;
@@ -22,11 +25,15 @@ interface RegisterInfoProps {
 }
 
 const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterInfoProps) => {
+  const { addToast } = useToasts();
   const recaptchaRef: RefObject<ReCAPTCHA> = React.createRef<ReCAPTCHA>();
   const [form] = Form.useForm();
   const fullNameRef: any = useRef();
+  const [registerSuccessful, setRegisterSuccessful] = useState(false);
   const [fullName, setFullName] = useState('');
   const [password, setPassword] = useState('');
+  const [registrationErrors, setRegistrationErrors] = useState<RegistrationErrors>({});
+
   const [formValidationInfo, setFormValidationInfo] = useState<RegisterFormValidationInfo>({
     mail: {
       status: '',
@@ -42,7 +49,7 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
     }
   });
 
-  const [setEmail, email] = useMailValidator(formValidationInfo, setFormValidationInfo);
+  const [setEmail, email] = useMailValidator(registrationErrors, setRegistrationErrors);
 
   const REGISTER_USER = gql`
      mutation {
@@ -56,18 +63,16 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
         }
         ... on RegistrationErrors {
           mailInvalid
-          mailNeedsConfirmation
-          passwordInvalid
-          hashingFailed
-          mailExists
           fullNameInvalid
+          passwordInadequate
+          _mailExists
+          _passwordWeak
         }
       }
     }
 `;
 
   const [registerUser, { data, loading }] = useMutation(REGISTER_USER, { fetchPolicy: 'no-cache' });
-  const [registerSuccessful, setRegisterSuccessful] = useState(false);
 
   const register = e => {
     registerUser()
@@ -75,10 +80,12 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
         if (d.data.registerUser.__typename === 'RegistrationResponse' && d.data.registerUser.success) {
           setRegisterSuccessful(true);
         }
-        console.log(d);
+        if (d.data.registerUser.__typename === 'RegistrationErrors') {
+          setFormValidationInfo(factorFormValidationInfo(form, { ...d.data.registerUser }));
+        }
       })
       .catch(e => {
-        console.log(e);
+        addToast('Αδυναμια ανταποκρισης απο τον διακομιστη.', { appearance: 'error', autoDismiss: true });
       });
   };
 
@@ -91,12 +98,7 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
     }
   }, [mail]);
 
-  useEffect(() => {
-    setFormValidationInfo(factorFormValidationInfo(form, validateRegistrationInput(email, fullName, password)));
-  }, [email, password, fullName]);
-
   const onMailChange = () => {
-    console.log(form.getFieldValue('mail'));
     setEmail(form.getFieldValue('mail'));
   };
 
@@ -107,6 +109,15 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
   const onFullNameChange = () => {
     setFullName(form.getFieldValue('fullName'));
   };
+
+  useEffect(() => {
+    setFormValidationInfo(factorFormValidationInfo(form, registrationErrors));
+  }, [registrationErrors]);
+
+  useEffect(() => {
+    const _mailExists = registrationErrors._mailExists;
+    setRegistrationErrors({ _mailExists, ...validateRegistrationInput(email, fullName, password) });
+  }, [email, password, fullName]);
 
   return (
     <Col span={24} className={'text-left p-1 mt-4'}>
@@ -156,16 +167,10 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
           <Button
             loading={loading}
             htmlType={'submit'}
+            disabled={Object.keys(registrationErrors).length === 0 ? false : true}
             block
             className={`${style.inputButton} auth-disabled`}
             icon={registerSuccessful && <CheckOutlined />}
-            // disabled={
-            //   !isAccountValid({
-            //     mail: form.getFieldValue('mail'),
-            //     password: form.getFieldValue('password'),
-            //     fullName: form.getFieldValue('fullName')
-            //   }) || registerSuccessful
-            // }
             type={'primary'}
           >
             {!registerSuccessful ? <span>Σύνεχεια</span> : <span className="pulse">Εγγραφή επιτυχής</span>}
