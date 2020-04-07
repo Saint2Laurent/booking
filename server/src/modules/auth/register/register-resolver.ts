@@ -12,8 +12,8 @@ const bcrypt = require('bcryptjs');
 const validator = require('validator');
 const _ = require('loadsh');
 
-const RegisterResponse = createUnionType({
-  name: 'RegisterResult',
+const RegisterResult = createUnionType({
+  name: 'RegisterResponse',
   types: () => [RegistrationResponse, RegistrationErrors]
 });
 
@@ -34,8 +34,8 @@ export class RegisterResolver {
     return false;
   }
 
-  @Mutation(() => RegisterResponse)
-  async registerUser(@Args() { fullName, mail, password }: RegistrationInput): Promise<typeof RegisterResponse> {
+  @Mutation(() => RegisterResult)
+  async registerUser(@Args() { fullName, mail, password }: RegistrationInput): Promise<typeof RegisterResult> {
     await sleep(750);
     const user = await User.findOne({ mail: mail });
     console.log(fullName);

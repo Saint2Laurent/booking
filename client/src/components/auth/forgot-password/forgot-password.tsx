@@ -3,13 +3,13 @@ import style from '../auth.module.scss';
 import { Button, Col, Form, Input, Row } from 'antd';
 import AuthHeader from '../auth-header';
 import { useMailValidator } from '../../../hooks/use-mail-validators';
-import { ForgotPasswordErrors } from '../../../../../shared/types/api/auth/auth-responses';
+import { RequestPasswordResetErrors } from '../../../../../shared/types/api/auth/auth-responses';
 import { FormValidationInfoField, isMailValid } from '../../../../../shared/validators/auth/common-auth-validator';
 import { CheckOutlined } from '@ant-design/icons';
 
 const ForgotPassword = () => {
   const [form] = Form.useForm();
-  const [forgotPasswordErrors, setForgotPasswordErrors] = useState<ForgotPasswordErrors>({});
+  const [forgotPasswordErrors, setForgotPasswordErrors] = useState<RequestPasswordResetErrors>({});
   const [formErrors, setFormErrors] = useState<FormValidationInfoField>({ status: '', message: '' });
   const [setEmail, email, isRegistered] = useMailValidator();
   const [requestSuccessful, setRequestSuccessful] = useState(false);

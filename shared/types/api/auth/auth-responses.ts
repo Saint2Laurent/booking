@@ -1,9 +1,18 @@
 import { User } from '../../entity/User';
 
-export interface ForgotPasswordErrors {
+export interface RequestPasswordResetInput {
+  mail: string;
+}
+
+export interface RequestPasswordResetResponse {
+  success: boolean;
+}
+
+export interface RequestPasswordResetErrors {
   mailInvalid?: boolean;
   _mailNotRegistered?: boolean;
   _tooManyAttempts?: boolean;
+  _failedToSend?: boolean;
 }
 
 export interface LoginInput {
@@ -16,6 +25,11 @@ export interface LoginResponse {
   token: string;
 }
 
+export interface LoginErrors {
+  _passwordInvalid?: boolean;
+  _notRegistered?: boolean;
+}
+
 export interface RegistrationResponse {
   success: boolean;
   loginResponse: LoginResponse;
@@ -25,11 +39,6 @@ export interface RegistrationInput {
   fullName: string;
   mail: string;
   password: string;
-}
-
-export interface LoginErrors {
-  _passwordInvalid?: boolean;
-  _notRegistered?: boolean;
 }
 
 export interface RegistrationErrors {

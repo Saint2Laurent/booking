@@ -6,8 +6,38 @@ import {
   LoginErrors as LoginErrorsInterface,
   RegistrationErrors as RegistrationErrorsInterface,
   RegistrationResponse as RegistrationResponseInterface,
-  RegistrationInput as RegistrationInputInterface
+  RegistrationInput as RegistrationInputInterface,
+  RequestPasswordResetResponse as RequestPasswordResetResponseInterface,
+  RequestPasswordResetErrors as RequestPasswordResetErrorsInterface,
+  RequestPasswordResetInput as RequestPasswordResetInputInterface
 } from '../../../../shared/types/api/auth/auth-responses';
+
+@ObjectType()
+export class RequestPasswordResetResponse implements RequestPasswordResetResponseInterface {
+  @Field()
+  success: boolean;
+}
+
+@ObjectType()
+export class RequestPasswordResetErrors implements RequestPasswordResetErrorsInterface {
+  @Field({ nullable: true })
+  mailInvalid?: boolean;
+
+  @Field({ nullable: true })
+  _mailNotRegistered?: boolean;
+
+  @Field({ nullable: true })
+  _tooManyAttempts?: boolean;
+
+  @Field({ nullable: true })
+  _failedToSend?: boolean;
+}
+
+@ArgsType()
+export class RequestPasswordResetInput implements RequestPasswordResetInputInterface {
+  @Field()
+  mail: string;
+}
 
 @ArgsType()
 export class LoginInput implements LoginInputInterface {

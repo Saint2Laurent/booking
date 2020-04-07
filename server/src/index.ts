@@ -5,7 +5,8 @@ import Express from 'express';
 import { createConnection } from 'typeorm';
 import { User } from './entity/User';
 import RegisterResolver from './modules/auth/register/register-resolver';
-import { authChecker } from './modules/auth/auth-middleware';
+import { authUserMiddleware } from './modules/auth/auth-user-middleware';
+import { RequestPasswordResetResolver } from './modules/auth/forgot-password/request-password-reset';
 require('dotenv').config();
 
 const jwt = require('jsonwebtoken');
@@ -25,8 +26,8 @@ const connectToDb = async () => {
 const stitchSchema = async () => {
   try {
     schema = await buildSchema({
-      resolvers: [RegisterResolver],
-      authChecker
+      resolvers: [RegisterResolver, RequestPasswordResetResolver],
+      authChecker: authUserMiddleware
     });
   } catch (e) {
     console.log('Failed to create schema', e);
