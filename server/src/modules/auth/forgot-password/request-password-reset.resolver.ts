@@ -20,7 +20,6 @@ export class RequestPasswordResetResolver {
     const user = await User.findOne({ mail });
 
     const errors = await validateRequestPasswordReset(mail, user);
-    console.log(errors);
     if (_.some(errors)) {
       return plainToClass(RequestPasswordResetErrors, errors);
     }
@@ -29,10 +28,12 @@ export class RequestPasswordResetResolver {
     const reset = await PasswordReset.create({
       userId: user!.id,
       token: uuid(),
-      expiresAt: new Date(date.setMinutes(date.getMinutes() + 15))
+      expiresAt: new Date(date.setMinutes(date.getMinutes() + 315))
     }).save();
 
-    const mailSent = sendPasswordResetMail(user!, reset.token);
+    const mailSent = await sendPasswordResetMail(user!, reset.token);
+    console.log(mailSent);
+    // const mailSent = true;
 
     if (!mailSent) {
       return plainToClass(RequestPasswordResetErrors, { _failedToSend: true });

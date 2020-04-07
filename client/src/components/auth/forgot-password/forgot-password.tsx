@@ -6,6 +6,8 @@ import { useMailValidator } from '../../../hooks/use-mail-validators';
 import { RequestPasswordResetErrors } from '../../../../../shared/types/api/auth/auth-responses';
 import { FormValidationInfoField, isMailValid } from '../../../../../shared/validators/auth/common-auth-validator';
 import { CheckOutlined } from '@ant-design/icons';
+import { useMutation } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
 
 const ForgotPassword = () => {
   const [form] = Form.useForm();
@@ -14,11 +16,45 @@ const ForgotPassword = () => {
   const [setEmail, email, isRegistered] = useMailValidator();
   const [requestSuccessful, setRequestSuccessful] = useState(false);
 
-  const finished = () => {};
+  const REQUEST_PASSWORD_RESET = gql`
+    mutation{
+      requestPasswordReset(mail: "${email}"){
+        ... on RequestPasswordResetResponse{
+          success
+        }
+        ... on RequestPasswordResetErrors{
+          mailInvalid
+          _mailNotRegistered
+          _tooManyAttempts
+          _failedToSend
+        }
+      }
+    }
+  `;
+
+  const [requestPasswordReset, { data, loading }] = useMutation(REQUEST_PASSWORD_RESET, { fetchPolicy: 'no-cache' });
+
+  const finished = () => {
+    requestPasswordReset()
+      .then(d => {
+        console.log(d);
+        const data = d.data.requestPasswordReset;
+        if (data.__typename === 'RequestPasswordResetResponse' && data.success) {
+          setRequestSuccessful(true);
+        }
+        if (data.__typename === 'RequestPasswordResetErrors') {
+          console.log(data);
+          setForgotPasswordErrors(data);
+        }
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  };
 
   const factorFormValidationInfo = () => {
     let formFieldErrors: FormValidationInfoField = { status: '', message: '' };
-
+    console.log(forgotPasswordErrors);
     if (form.isFieldTouched('mail')) {
       if (forgotPasswordErrors.mailInvalid) {
         formFieldErrors = { status: 'warning', message: 'Το email δεν ειναι εγγυρο' };
@@ -36,10 +72,12 @@ const ForgotPassword = () => {
   }, [forgotPasswordErrors]);
 
   useEffect(() => {
-    if (!isMailValid(email)) {
+    if (!isMailValid(form.getFieldValue('mail'))) {
       setForgotPasswordErrors({ mailInvalid: true });
+    } else {
+      setForgotPasswordErrors({});
     }
-  }, [email]);
+  }, [form.getFieldValue('mail')]);
 
   useEffect(() => {
     console.log(isRegistered);
@@ -76,14 +114,29 @@ const ForgotPassword = () => {
                 <Form form={form} onFinish={finished}>
                   <Row>
                     <Col span={24}>
-                      <Form.Item hasFeedback help={formErrors.message} validateStatus={formErrors.status} name="mail">
+                      <Form.Item hasFeedback extra={formErrors.message} validateStatus={formErrors.status} name="mail">
                         <Input onChange={onMailChange} placeholder="Λογαριασμός email" />
                       </Form.Item>
+                      {forgotPasswordErrors._tooManyAttempts && (
+                        <Row className={'m-0 p-0'}>
+                          <Form.Item
+                            hasFeedback
+                            className={'reduced-spacing'}
+                            validateStatus={'warning'}
+                            help={
+                              'Εχουν ηδη αποσταλει αρκετα emails προς αυτην την διευθυνση, αναμενετε καποιο διαστημα και ελενχετε τα εισερχομενα σας τακτικα.'
+                            }
+                          >
+                            Αποτυχια παραδοσης email
+                          </Form.Item>
+                        </Row>
+                      )}
+
                       <Row className="mt-4 pt-4 pb-3">
                         <Button
                           icon={requestSuccessful && <CheckOutlined />}
                           disabled={Object.keys(forgotPasswordErrors).length !== 0 || requestSuccessful}
-                          // loading={loading}
+                          loading={loading}
                           htmlType={'submit'}
                           block
                           className={`${style.inputButton} auth-disabled`}

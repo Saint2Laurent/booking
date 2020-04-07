@@ -6,7 +6,7 @@ import { createConnection } from 'typeorm';
 import { User } from './entity/User';
 import RegisterResolver from './modules/auth/register/register-resolver';
 import { authUserMiddleware } from './modules/auth/auth-user-middleware';
-import { RequestPasswordResetResolver } from './modules/auth/forgot-password/request-password-reset';
+import { RequestPasswordResetResolver } from './modules/auth/forgot-password/request-password-reset.resolver';
 require('dotenv').config();
 
 const jwt = require('jsonwebtoken');

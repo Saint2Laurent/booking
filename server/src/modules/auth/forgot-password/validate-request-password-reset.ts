@@ -5,7 +5,7 @@ import { User } from '../../../entity/User';
 import { PasswordReset } from '../../../entity/PasswordReset';
 import { v4 as uuid } from 'uuid';
 
-export const validateRequestPasswordReset = async (mail: string, user?: User): RequestPasswordResetErrors => {
+export const validateRequestPasswordReset = async (mail: string, user?: User): Promise<RequestPasswordResetErrors> => {
   let errors: RequestPasswordResetErrors = {};
 
   if (!isMailValid(mail)) {
@@ -21,7 +21,7 @@ export const validateRequestPasswordReset = async (mail: string, user?: User): R
     return r.expiresAt > new Date();
   });
 
-  if (notExpiredResets.length > 50) {
+  if (notExpiredResets.length > 35) {
     return { _tooManyAttempts: true };
   }
   return errors;
