@@ -3,11 +3,12 @@ import style from '../auth.module.scss';
 import { Button, Col, Form, Input, Row } from 'antd';
 import AuthHeader from '../auth-header';
 import { useMailValidator } from '../../../hooks/use-mail-validators';
-import { RequestPasswordResetErrors } from '../../../../../shared/types/api/auth/auth-responses';
+import { RequestPasswordResetErrors } from '../../../../../shared/types/api/auth/request-password-reset';
 import { FormValidationInfoField, isMailValid } from '../../../../../shared/validators/auth/common-auth-validator';
 import { CheckOutlined } from '@ant-design/icons';
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
+import { CSSTransition } from 'react-transition-group';
 
 const ForgotPassword = () => {
   const [form] = Form.useForm();
@@ -106,7 +107,7 @@ const ForgotPassword = () => {
           >
             <Row className="text-center">
               <Col span={24}>
-                <h1 className={style.headingTitle2}>Ανακτηση λογαριασμου </h1>
+                <h1 className={style.headingTitle2}>Ανακτηση κωδικου </h1>
               </Col>
             </Row>
             <div className={style.slideContainer}>
@@ -134,7 +135,13 @@ const ForgotPassword = () => {
 
                       <Row className="mt-4 pt-4 pb-3">
                         <Button
-                          icon={requestSuccessful && <CheckOutlined />}
+                          icon={
+                            requestSuccessful && (
+                              <CSSTransition appear timeout={1200} classNames="swapViews">
+                                <CheckOutlined />
+                              </CSSTransition>
+                            )
+                          }
                           disabled={Object.keys(forgotPasswordErrors).length !== 0 || requestSuccessful}
                           loading={loading}
                           htmlType={'submit'}

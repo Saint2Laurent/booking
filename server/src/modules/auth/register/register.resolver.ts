@@ -1,12 +1,13 @@
 import { Query, Resolver, Arg, Mutation, Args, createUnionType } from 'type-graphql';
 import { plainToClass } from 'class-transformer';
 import { User } from '../../../entity/User';
-import { LoginResponse, RegistrationInput, RegistrationErrors, RegistrationResponse } from '../auth-responses';
+
 import { RegisterConfirmation } from '../../../entity/RegisterConfirmation';
 import { v4 as uuid } from 'uuid';
 import { sendConfirmationMail } from '../../../utils/mail/mailer';
-import { validateRegisterRequest } from './register-validations';
-import { logUser } from '../login/login-resolver';
+import { validateRegisterRequest } from './register.validation';
+import { logUser } from '../login/login.resolver';
+import { RegistrationErrors, RegistrationInput, RegistrationResponse } from './register.types';
 const argon2 = require('argon2');
 const bcrypt = require('bcryptjs');
 const validator = require('validator');

@@ -1,7 +1,7 @@
 import { User } from '../../../entity/User';
-import { RegistrationErrors } from '../auth-responses';
 import { plainToClass } from 'class-transformer';
 import { validateRegistrationInput } from '../../../../../shared/validators/auth/common-auth-validator';
+import { RegistrationErrors } from './register.types';
 const zxcvbn = require('zxcvbn');
 const validator = require('validator');
 

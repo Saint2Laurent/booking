@@ -1,8 +1,9 @@
 import { Args, Authorized, createUnionType, Mutation, Resolver } from 'type-graphql';
-import { LoginErrors, LoginInput, LoginResponse, RegistrationErrors, RegistrationResponse } from '../auth-responses';
+
 import { User } from '../../../entity/User';
 import { plainToClass } from 'class-transformer';
-import { validateLoginRequest } from './login-validations';
+import { validateLoginRequest } from './login.validation';
+import { LoginErrors, LoginInput, LoginResponse } from './login.types';
 
 const _ = require('loadsh');
 

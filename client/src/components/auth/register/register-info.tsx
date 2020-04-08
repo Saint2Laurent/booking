@@ -1,11 +1,10 @@
-import React, { MutableRefObject, RefObject, useEffect, useRef, useState } from 'react';
+import React, { RefObject, useEffect, useRef, useState } from 'react';
 import style from '../auth.module.scss';
 import { Form, Input, Button, Row, Col } from 'antd';
 import '@ant-design/compatible/assets/index.css';
 import googleIcon from '../../../assets/images/icon-google.svg';
 import {
   factorFormValidationInfo,
-  isMailValid,
   RegisterFormValidationInfo,
   validateRegistrationInput
 } from '../../../../../shared/validators/auth/common-auth-validator';
@@ -17,8 +16,7 @@ import gql from 'graphql-tag';
 import { CheckOutlined } from '@ant-design/icons';
 import { Wave } from 'react-animated-text';
 import { useToasts } from 'react-toast-notifications';
-import { RegistrationErrors } from '../../../../../shared/types/api/auth/auth-responses';
-import { xor } from '../../../../../shared/utils/boole';
+import { RegistrationErrors } from '../../../../../shared/types/api/auth/register';
 
 interface RegisterInfoProps {
   mail: string;

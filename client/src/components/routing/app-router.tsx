@@ -13,6 +13,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import Dashboard from '../dashboard/dashboard';
 import useIsInAuth from '../../hooks/use-is-in-auth';
 import ForgotPassword from '../auth/forgot-password/forgot-password';
+import ForgotPasswordReset from '../auth/forgot-password/forgot-password-reset';
 
 const AppRouter = () => {
   const { Content } = Layout;
@@ -38,9 +39,13 @@ const AppRouter = () => {
               <Route path="/auth/register">
                 <Register />
               </Route>
-              <Route path="/auth/forgot-password">
+              <Route exact path="/auth/reset-password">
                 <ForgotPassword />
               </Route>
+              <Route path="/auth/reset-password/:tokenId">
+                <ForgotPasswordReset />
+              </Route>
+
               <Route path="/" exact>
                 <Dashboard />
               </Route>

@@ -16,7 +16,7 @@ export const passwordResetHtml = (user: User, token: string) => {
           Καλησπερα ${user.fullName}, <br> παρακατω ειναι ο συνδεσμος για την επαναφορα του κωδικου σας.
       </div>
       <div class="item pt-4">
-          <a href="localhost:3000/auth/password-reset/${token}">localhost:3000/auth/password-reset/${token}</a>
+          <a href="http://localhost:3000/auth/reset-password/${token}">localhost:3000/auth/password-reset/${token}</a>
       </div>
       </body>
     </html>

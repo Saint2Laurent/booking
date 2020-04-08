@@ -31,6 +31,6 @@
     "emitDecoratorMetadata": true
   },
   "exclude": ["node_modules"],
-  "include": ["./src/**/*.tsx", "./src/**/*.ts"],
+  "include": ["./src/**/*.tsx", "./src/**/*.ts", "../shared/**/*.ts"],
   "references": [{ "path": "../shared" }]
 }

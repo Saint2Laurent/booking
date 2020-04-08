@@ -1,4 +1,4 @@
-import { LoginErrors } from '../auth-responses';
+import { LoginErrors } from '../forgot-password/reset-request/request-password-reset.types';
 import { plainToClass } from 'class-transformer';
 import { User } from '../../../entity/User';
 const argon2 = require('argon2');

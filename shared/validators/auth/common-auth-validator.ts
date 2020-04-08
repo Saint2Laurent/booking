@@ -1,5 +1,5 @@
 import { isEmpty } from '../../utils/is-empty';
-import { RegistrationErrors } from '../../types/api/auth/auth-responses';
+import { RegistrationErrors } from '../../types/api/auth/register';
 
 export interface FormValidationInfoField {
   status: 'success' | 'warning' | '';
@@ -29,7 +29,7 @@ export const isPasswordAdequate = (password: string): boolean => {
   return !isEmpty(password) && password.length > 7;
 };
 
-export const validateRegistrationInput = (mail, fullName, password): RegistrationErrors => {
+export const validateRegistrationInput = (mail: string, fullName: string, password: string): RegistrationErrors => {
   let registrationErrors: RegistrationErrors = {};
   console.log(mail, isMailValid(mail));
   if (!isMailValid(mail)) {
@@ -44,7 +44,10 @@ export const validateRegistrationInput = (mail, fullName, password): Registratio
   return registrationErrors;
 };
 
-export const factorFormValidationInfo = (form, registrationErrors: RegistrationErrors): RegisterFormValidationInfo => {
+export const factorFormValidationInfo = (
+  form: any,
+  registrationErrors: RegistrationErrors
+): RegisterFormValidationInfo => {
   let mailFormInfo: FormValidationInfoField = { status: '', message: '' };
   console.log('mailInvalid: ', registrationErrors.mailInvalid);
 

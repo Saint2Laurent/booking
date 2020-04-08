@@ -1,10 +1,14 @@
 import { Args, createUnionType, Mutation, Resolver } from 'type-graphql';
-import { RequestPasswordResetErrors, RequestPasswordResetInput, RequestPasswordResetResponse } from '../auth-responses';
+import {
+  RequestPasswordResetErrors,
+  RequestPasswordResetInput,
+  RequestPasswordResetResponse
+} from './request-password-reset.types';
 import { plainToClass } from 'class-transformer';
-import { validateRequestPasswordReset } from './validate-request-password-reset';
-import { User } from '../../../entity/User';
-import { sendPasswordResetMail } from '../../../utils/mail/mailer';
-import { PasswordReset } from '../../../entity/PasswordReset';
+import { requestPasswordResetValidation } from './request-password-reset.validation';
+import { User } from '../../../../entity/User';
+import { sendPasswordResetMail } from '../../../../utils/mail/mailer';
+import { PasswordResetToken } from '../../../../entity/PasswordResetToken';
 import { v4 as uuid } from 'uuid';
 const _ = require('loadsh');
 
@@ -19,20 +23,19 @@ export class RequestPasswordResetResolver {
   async requestPasswordReset(@Args() { mail }: RequestPasswordResetInput): Promise<typeof RequestPasswordResetResult> {
     const user = await User.findOne({ mail });
 
-    const errors = await validateRequestPasswordReset(mail, user);
+    const errors = await requestPasswordResetValidation(mail, user);
     if (_.some(errors)) {
       return plainToClass(RequestPasswordResetErrors, errors);
     }
 
     let date = new Date();
-    const reset = await PasswordReset.create({
+    const reset = await PasswordResetToken.create({
       userId: user!.id,
       token: uuid(),
       expiresAt: new Date(date.setMinutes(date.getMinutes() + 315))
     }).save();
 
     const mailSent = await sendPasswordResetMail(user!, reset.token);
-    console.log(mailSent);
     // const mailSent = true;
 
     if (!mailSent) {

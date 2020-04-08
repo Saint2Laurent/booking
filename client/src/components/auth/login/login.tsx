@@ -133,29 +133,37 @@ const Login = () => {
                     <Col span={24}>
                       <Form.Item
                         name="password"
+                        htmlFor={'password'}
                         hasFeedback
                         validateStatus={isEmpty(passwordError) ? '' : 'warning'}
                         extra={isEmpty(passwordError) ? '' : passwordError}
+                        className={'p-0 m-0'}
                       >
                         <Input.Password onChange={onPasswordChange} placeholder="Κώδικος" />
-                        <Col span={24} className={'text-right pt-1'}>
-                          <a
-                            className={style.forgotPasswordLink}
-                            onClick={() => {
-                              history.push('/auth/forgot-password');
-                            }}
-                          >
-                            Ξεχασα τον κωδικο μου
-                          </a>
-                        </Col>
                       </Form.Item>
                     </Col>
                   </Row>
+                  <Row>
+                    <Col span={24} className={'text-right pt-1'}>
+                      <a
+                        className={style.forgotPasswordLink}
+                        onClick={() => {
+                          history.push('/auth/reset-password');
+                        }}
+                      >
+                        Ξεχασα τον κωδικο μου
+                      </a>
+                    </Col>
+                  </Row>
 
-                  <Row className="mt-4">
+                  <Row className="mt-5">
                     <Button
                       icon={loginSuccessful && <CheckOutlined />}
-                      disabled={!isMailValid(mail) || !isPasswordAdequate(password) || loginSuccessful}
+                      disabled={
+                        !isMailValid(form.getFieldValue('mail')) ||
+                        !isPasswordAdequate(form.getFieldValue('password')) ||
+                        loginSuccessful
+                      }
                       loading={loading}
                       htmlType={'submit'}
                       block
