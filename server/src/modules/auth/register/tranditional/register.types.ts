@@ -1,10 +1,10 @@
 import { ArgsType, Field, ObjectType } from 'type-graphql';
-import { LoginResponse } from '../login/login.types';
+import { LoginResponse } from '../../login/tranditional/login.types';
 import {
   RegistrationErrors as RegistrationErrorsInterface,
   RegistrationResponse as RegistrationResponseInterface,
   RegistrationInput as RegistrationInputInterface
-} from '../../../../../shared/types/api/auth/register';
+} from '../../../../../../shared/types/api/auth/register';
 
 @ObjectType()
 export class RegistrationErrors implements RegistrationErrorsInterface {

@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 import { registerEnumType } from 'type-graphql';
-import {Role, User as UserInterface} from '../../../shared/types/entity/User'
+import { Role, User as UserInterface } from '../../../shared/types/entity/User';
 
 registerEnumType(Role, {
   name: 'Role'
@@ -9,7 +9,7 @@ registerEnumType(Role, {
 
 @ObjectType()
 @Entity()
-export class User extends BaseEntity implements UserInterface{
+export class User extends BaseEntity implements UserInterface {
   @Field(() => ID)
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -37,10 +37,10 @@ export class User extends BaseEntity implements UserInterface{
   @Column({ nullable: true })
   googleId?: string;
 
-  @Field({nullable: true})
-  profileImageUrl?: string;
-
   @Field(() => Role)
   @Column({ type: 'enum', enum: Role, default: Role.MASTER })
   role: Role;
+
+  @Field({ nullable: true })
+  profileImageUrl?: string;
 }

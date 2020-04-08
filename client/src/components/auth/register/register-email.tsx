@@ -9,6 +9,7 @@ import { useMailValidator } from '../../../hooks/use-mail-validators';
 import {
   FormValidationInfoField,
   isMailValid,
+  isPasswordAdequate,
   validateRegistrationInput
 } from '../../../../../shared/validators/auth/common-auth-validator';
 
@@ -81,7 +82,7 @@ export const RegisterEmail: React.FC<RegisterEmailProps> = ({ swapView, setMail 
               name="mail"
               hasFeedback
               validateStatus={formValidationInfo.status}
-              help={formValidationInfo.message}
+              extra={formValidationInfo.message}
             >
               <Input onChange={onMailChange} placeholder="Λογαριασμός email" />
             </Form.Item>

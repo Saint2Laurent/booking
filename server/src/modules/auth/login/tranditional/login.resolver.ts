@@ -1,6 +1,6 @@
 import { Args, Authorized, createUnionType, Mutation, Resolver } from 'type-graphql';
 
-import { User } from '../../../entity/User';
+import { User } from '../../../../entity/User';
 import { plainToClass } from 'class-transformer';
 import { validateLoginRequest } from './login.validation';
 import { LoginErrors, LoginInput, LoginResponse } from './login.types';
@@ -12,7 +12,11 @@ const RegisterResult = createUnionType({
   types: () => [LoginResponse, LoginErrors]
 });
 
-export const logUser = (user: User): LoginResponse => {
+export const logUser = (user: User, profileImgUrl?: string): LoginResponse => {
+  if (profileImgUrl) {
+    user.profileImageUrl = profileImgUrl;
+  }
+
   const jwt = require('jsonwebtoken');
   const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: process.env.TOKEN_EXPIRES_AFTER });
   return plainToClass(LoginResponse, { user: user, token: token });

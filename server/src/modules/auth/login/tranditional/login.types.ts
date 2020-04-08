@@ -3,8 +3,8 @@ import {
   LoginInput as LoginInputInterface,
   LoginResponse as LoginResponseInterface,
   LoginErrors as LoginErrorsInterface
-} from '../../../../../shared/types/api/auth/login';
-import { User } from '../../../entity/User';
+} from '../../../../../../shared/types/api/auth/login';
+import { User } from '../../../../entity/User';
 
 @ArgsType()
 export class LoginInput implements LoginInputInterface {
@@ -26,6 +26,12 @@ export class LoginResponse implements LoginResponseInterface {
 
 @ObjectType()
 export class LoginErrors implements LoginErrorsInterface {
+  @Field({ nullable: true })
+  mailInvalid?: boolean;
+
+  @Field({ nullable: true })
+  _isGoogle?: boolean;
+
   @Field({ nullable: true })
   _passwordInvalid?: boolean;
 

@@ -1,4 +1,4 @@
-import React, { RefObject, useState } from 'react';
+import React, { RefObject, useEffect, useState } from 'react';
 import style from '../auth.module.scss';
 import '@ant-design/compatible/assets/index.css';
 import { Row, Col, Input, Form, Button } from 'antd';
@@ -14,8 +14,22 @@ import { isEmpty } from '../../../../../shared/utils/is-empty';
 import { Wave } from 'react-animated-text';
 import { CheckOutlined } from '@ant-design/icons';
 import gql from 'graphql-tag';
-import { isMailValid, isPasswordAdequate } from '../../../../../shared/validators/auth/common-auth-validator';
+import {
+  FormValidationInfoField,
+  isMailValid,
+  isPasswordAdequate
+} from '../../../../../shared/validators/auth/common-auth-validator';
 import ReCAPTCHA from 'react-google-recaptcha';
+import { LoginErrors } from '../../../../../server/src/modules/auth/login/tranditional/login.types';
+import useNotification from '../../../hooks/use-notification';
+import { GoogleLoginErrors } from '../../../../../server/src/modules/auth/login/google/google-login.types';
+
+interface LoginFormErrors {
+  mail: FormValidationInfoField;
+  password: FormValidationInfoField;
+}
+
+type GoogleAndLoginErrors = LoginErrors & GoogleLoginErrors;
 
 const Login = () => {
   const [form] = useForm();
@@ -25,9 +39,35 @@ const Login = () => {
   const [isFetchingGoogle, setIsFetchingGoogle] = useState(false);
   const [password, setPassword] = useState('');
   const [mail, setMail] = useState('');
-  const [mailError, setMailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
+  const [loginErrors, setLoginErrors] = useState<GoogleAndLoginErrors>({});
+  const [googleToken, setGoogleToken] = useState('');
+  const [googleLoginSuccessful, setGoogleLoginSuccessful] = useState(false);
+  const notifyResponseError = useNotification();
+
+  const [loginFormErrors, setLoginFormErrors] = useState<LoginFormErrors>({
+    mail: { status: '', message: '' },
+    password: { status: '', message: '' }
+  });
   const [loginSuccessful, setLoginSuccessful] = useState(false);
+
+  const GOOGLE_LOGIN_USER = gql`
+    mutation {
+      googleLogin(token: "${googleToken}") {
+        ... on GoogleLoginResponse {
+          user {
+            id
+            fullName
+            mail
+            profileImageUrl
+          }
+          token
+        }
+        ... on GoogleLoginErrors {
+          _tokenInvalid
+        }
+      }
+    }
+  `;
 
   const LOGIN_USER = gql`
     mutation{
@@ -45,6 +85,8 @@ const Login = () => {
           }
         }
         ... on LoginErrors{
+          mailInvalid
+          _isGoogle
           _notRegistered
           _passwordInvalid
         }
@@ -53,46 +95,104 @@ const Login = () => {
   `;
 
   const [loginUser, { data, loading }] = useMutation(LOGIN_USER, { fetchPolicy: 'no-cache' });
+  const [googleLoginUser] = useMutation(GOOGLE_LOGIN_USER, { fetchPolicy: 'no-cache' });
 
   const finished = () => {
     loginUser()
       .then(d => {
-        resetErrors();
-        const data = d.data;
-        if (data.loginUser.__typename === 'LoginErrors') {
-          if (data.loginUser._passwordInvalid) {
-            setPasswordError('Ο κώδικος δεν είναι σωστός');
-          }
-          if (d.data.loginUser._notRegistered) {
-            setMailError('Ο λογαριασμός δεν είναι εγγεγραμένος');
-          }
+        const data = d.data.loginUser;
+        if (data.__typename === 'LoginErrors') {
+          setLoginErrors(data);
         }
-        console.log(d);
-        if (data.loginUser.__typename === 'LoginResponse') {
+        if (data.__typename === 'LoginResponse') {
+          console.log(data);
           setLoginSuccessful(true);
-          const { user, token } = data.loginUser;
+          const { user, token } = data;
           dispatch(login({ user, token }));
         }
       })
       .catch(e => {
         console.log(e);
+        notifyResponseError();
       });
   };
 
   const responseGoogle = (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
-    setIsFetchingGoogle(false);
+    const res = response as GoogleLoginResponse;
+    setGoogleToken(res.tokenObj.id_token);
+    console.log(response);
+    googleLoginUser()
+      .then(d => {
+        const data = d.data.googleLogin;
+
+        if (data.__typename === 'GoogleLoginResponse') {
+          console.log(data);
+          setGoogleLoginSuccessful(true);
+        }
+        if (data.__typename === 'GoogleLoginErrors') {
+          setLoginErrors(data);
+        }
+      })
+      .catch(e => {})
+      .finally(() => {
+        setIsFetchingGoogle(false);
+      });
   };
+
+  const validateLogin = () => {
+    if (!isMailValid(mail)) {
+      setLoginErrors({ mailInvalid: true });
+    } else if (!isPasswordAdequate(password)) {
+      setLoginErrors({ _passwordInvalid: true });
+    } else {
+      setLoginErrors({});
+    }
+  };
+
+  const factorFormValidationInfo = () => {
+    const errors: LoginFormErrors = {
+      mail: { status: '', message: '' },
+      password: { status: '', message: '' }
+    };
+
+    if (form.isFieldTouched('mail')) {
+      if (loginErrors.mailInvalid) {
+        errors.mail = { status: 'warning', message: 'Το email δεν ειναι εγγυρο' };
+      } else if (loginErrors._notRegistered) {
+        errors.mail = { status: 'warning', message: 'Το email δεν ειναι εγγεγραμμενο' };
+      } else if (loginErrors._isGoogle) {
+        errors.mail = {
+          status: 'warning',
+          message: 'Ο λογαριασμος ειναι εγγεγραμμενος μεσω Google, εισελθετε απο την επιλογη "Συνεχεια με Google"'
+        };
+      } else {
+        errors.mail = { status: 'success', message: '' };
+      }
+    }
+
+    if (form.isFieldTouched('password')) {
+      if (loginErrors._passwordInvalid) {
+        errors.password = { status: 'warning', message: 'Ο κωδικος δεν ειναι σωστος' };
+      }
+    }
+
+    setLoginFormErrors(errors);
+  };
+
+  useEffect(() => {
+    factorFormValidationInfo();
+  }, [loginErrors]);
+
+  useEffect(() => {
+    validateLogin();
+  }, [mail, password]);
+
   const onMailChange = () => {
     setMail(form.getFieldValue('mail'));
   };
 
   const onPasswordChange = () => {
     setPassword(form.getFieldValue('password'));
-  };
-
-  const resetErrors = () => {
-    setPasswordError('');
-    setMailError('');
   };
 
   return (
@@ -121,8 +221,8 @@ const Login = () => {
                         htmlFor={'email'}
                         name="mail"
                         hasFeedback
-                        validateStatus={isEmpty(mailError) ? '' : 'warning'}
-                        extra={isEmpty(mailError) ? '' : mailError}
+                        validateStatus={loginFormErrors.mail.status}
+                        extra={loginFormErrors.mail.message}
                         className={style.authFormItem}
                       >
                         <Input onChange={onMailChange} autoFocus placeholder="Το email σας" />
@@ -135,8 +235,8 @@ const Login = () => {
                         name="password"
                         htmlFor={'password'}
                         hasFeedback
-                        validateStatus={isEmpty(passwordError) ? '' : 'warning'}
-                        extra={isEmpty(passwordError) ? '' : passwordError}
+                        validateStatus={loginFormErrors.password.status}
+                        extra={loginFormErrors.password.message}
                         className={'p-0 m-0'}
                       >
                         <Input.Password onChange={onPasswordChange} placeholder="Κώδικος" />
@@ -159,11 +259,7 @@ const Login = () => {
                   <Row className="mt-5">
                     <Button
                       icon={loginSuccessful && <CheckOutlined />}
-                      disabled={
-                        !isMailValid(form.getFieldValue('mail')) ||
-                        !isPasswordAdequate(form.getFieldValue('password')) ||
-                        loginSuccessful
-                      }
+                      disabled={Object.keys(loginErrors).length !== 0 || loginSuccessful}
                       loading={loading}
                       htmlType={'submit'}
                       block
@@ -173,18 +269,13 @@ const Login = () => {
                       Είσοδος
                     </Button>
                   </Row>
-                  <Row>
-                    <Col span={24} className={'text-center d-flex'}>
-                      {!loginSuccessful ? (
+                  {!loginSuccessful && (
+                    <Row>
+                      <Col span={24} className={'text-center d-flex'}>
                         <span>Ή</span>
-                      ) : (
-                        <div className={style.redirectedSoon}>
-                          Είσοδος επιτυχης! Ανακατευθηνση
-                          <Wave text="..." effect="verticalFadeIn" effectChange={0.1} speed={2} />
-                        </div>
-                      )}
-                    </Col>
-                  </Row>
+                      </Col>
+                    </Row>
+                  )}
                   {!loginSuccessful && (
                     <Row>
                       <GoogleLogin
@@ -209,9 +300,24 @@ const Login = () => {
                         onFailure={responseGoogle}
                         cookiePolicy={'single_host_origin'}
                       />
+                      {loginErrors._tokenInvalid && (
+                        <span className={'small-text reduced-spacing color-warning pt-2'}>
+                          Υπηρξε καποιο προβλημα κατα την εισοδο μεσω Google. Προσπαθηστε εκ νεου.
+                        </span>
+                      )}
                     </Row>
                   )}
-                  <Row className={'mt-4 text-smaller text-center'}>
+                  {(loginSuccessful || googleLoginSuccessful) && (
+                    <Row>
+                      <Col span={24}>
+                        <div className={style.redirectedSoon}>
+                          Είσοδος επιτυχης! Ανακατευθηνση
+                          <Wave text="..." effect="verticalFadeIn" effectChange={0.1} speed={2} />
+                        </div>
+                      </Col>
+                    </Row>
+                  )}
+                  <Row className={'mt-2 text-smaller text-center'}>
                     <Col span={24} className="mt-4">
                       <hr />
                       <div className="mt-2">

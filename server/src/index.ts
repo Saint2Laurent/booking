@@ -4,10 +4,11 @@ import { buildSchema } from 'type-graphql';
 import Express from 'express';
 import { createConnection } from 'typeorm';
 import { User } from './entity/User';
-import RegisterResolver from './modules/auth/register/register.resolver';
+import RegisterResolver from './modules/auth/register/tranditional/register.resolver';
 import { authUserMiddleware } from './modules/auth/auth-user-middleware';
 import { RequestPasswordResetResolver } from './modules/auth/forgot-password/reset-request/request-password-reset.resolver';
 import { PasswordResetResolver } from './modules/auth/forgot-password/reset/password-reset.resolver';
+import { GoogleLoginResolver } from './modules/auth/login/google/google-login.resolver';
 require('dotenv').config();
 
 const jwt = require('jsonwebtoken');
@@ -27,7 +28,7 @@ const connectToDb = async () => {
 const stitchSchema = async () => {
   try {
     schema = await buildSchema({
-      resolvers: [RegisterResolver, RequestPasswordResetResolver, PasswordResetResolver],
+      resolvers: [RegisterResolver, RequestPasswordResetResolver, PasswordResetResolver, GoogleLoginResolver],
       authChecker: authUserMiddleware
     });
   } catch (e) {

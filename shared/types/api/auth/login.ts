@@ -1,5 +1,18 @@
 import { User } from '../../entity/User';
 
+export interface GoogleLoginInput {
+  token: string;
+}
+
+export interface GoogleLoginResponse {
+  user: User;
+  token: string;
+}
+
+export interface GoogleLoginErrors {
+  _tokenInvalid?: boolean;
+}
+
 export interface LoginInput {
   mail: string;
   password: string;
@@ -11,6 +24,8 @@ export interface LoginResponse {
 }
 
 export interface LoginErrors {
-  _passwordInvalid?: boolean;
+  mailInvalid?: boolean;
   _notRegistered?: boolean;
+  _isGoogle?: boolean;
+  _passwordInvalid?: boolean;
 }

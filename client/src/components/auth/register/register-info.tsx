@@ -15,8 +15,8 @@ import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { CheckOutlined } from '@ant-design/icons';
 import { Wave } from 'react-animated-text';
-import { useToasts } from 'react-toast-notifications';
 import { RegistrationErrors } from '../../../../../shared/types/api/auth/register';
+import { useNotification } from '../../../hooks/use-notification';
 
 interface RegisterInfoProps {
   mail: string;
@@ -24,7 +24,6 @@ interface RegisterInfoProps {
 }
 
 const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterInfoProps) => {
-  const { addToast } = useToasts();
   const recaptchaRef: RefObject<ReCAPTCHA> = React.createRef<ReCAPTCHA>();
   const [form] = Form.useForm();
   const fullNameRef: any = useRef();
@@ -32,6 +31,7 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
   const [fullName, setFullName] = useState('');
   const [password, setPassword] = useState('');
   const [registrationErrors, setRegistrationErrors] = useState<RegistrationErrors>({});
+  const notifyResponseError = useNotification();
 
   const [formValidationInfo, setFormValidationInfo] = useState<RegisterFormValidationInfo>({
     mail: {
@@ -84,7 +84,7 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
         }
       })
       .catch(e => {
-        addToast('Αδυναμια ανταποκρισης απο τον διακομιστη.', { appearance: 'error', autoDismiss: true });
+        notifyResponseError();
       });
   };
 
