@@ -17,6 +17,8 @@ import { CheckOutlined } from '@ant-design/icons';
 import { Wave } from 'react-animated-text';
 import { RegistrationErrors } from '../../../../../shared/types/api/auth/register';
 import { useNotification } from '../../../hooks/use-notification';
+import useGoogleLogin from '../../../hooks/use-google-login';
+import GoogleButton from '../login/google-button';
 
 interface RegisterInfoProps {
   mail: string;
@@ -32,6 +34,14 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
   const [password, setPassword] = useState('');
   const [registrationErrors, setRegistrationErrors] = useState<RegistrationErrors>({});
   const notifyResponseError = useNotification();
+  const {
+    isFetching,
+    setIsFetching,
+    onGoogleResponse,
+    onGoogleResponseFail,
+    googleErrors,
+    googleLoginSuccessful
+  } = useGoogleLogin();
 
   const [formValidationInfo, setFormValidationInfo] = useState<RegisterFormValidationInfo>({
     mail: {
@@ -132,6 +142,7 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
         <Row>
           <Col span={24}>
             <Form.Item
+              className={'p-0 mb-2'}
               name="mail"
               hasFeedback
               validateStatus={formValidationInfo.mail.status}
@@ -145,6 +156,7 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
         <Row>
           <Col span={24}>
             <Form.Item
+              className={'p-0 mb-2'}
               name="fullName"
               hasFeedback
               validateStatus={formValidationInfo.fullName.status}
@@ -198,12 +210,13 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
         </Row>
 
         {!registerSuccessful && (
-          <Row>
-            <Button block className={style.inputButton}>
-              <img className={style.buttonIcon} src={googleIcon} alt="" />
-              <span className="ml-1">Σύνεχεια με Google</span>
-            </Button>
-          </Row>
+          <GoogleButton
+            isFetching={isFetching}
+            googleLoginSuccessful={googleLoginSuccessful}
+            setIsFetching={setIsFetching}
+            onGoogleResponse={onGoogleResponse}
+            onGoogleResponseFail={onGoogleResponseFail}
+          />
         )}
 
         <Row className={'mt-4 text-smaller text-center'}>

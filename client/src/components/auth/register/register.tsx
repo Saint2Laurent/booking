@@ -38,7 +38,7 @@ const Register = () => {
           >
             <Row className="text-center">
               <Col span={24}>
-                <h1 className={style.headingTitle}>Δημιουρήστε έναν λογαριασμό </h1>
+                <h1 className={style.headingTitle}>Δημιουργία λογαριασμού </h1>
               </Col>
             </Row>
             <div className={style.slideContainer} ref={sliderRef}>

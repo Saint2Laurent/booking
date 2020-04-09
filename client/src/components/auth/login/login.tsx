@@ -10,7 +10,6 @@ import { useDispatch } from 'react-redux';
 import { login } from '../../../store/authSlice';
 import { useHistory } from 'react-router-dom';
 import { useMutation } from '@apollo/react-hooks';
-import { isEmpty } from '../../../../../shared/utils/is-empty';
 import { Wave } from 'react-animated-text';
 import { CheckOutlined } from '@ant-design/icons';
 import gql from 'graphql-tag';
@@ -23,51 +22,38 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import { LoginErrors } from '../../../../../server/src/modules/auth/login/tranditional/login.types';
 import useNotification from '../../../hooks/use-notification';
 import { GoogleLoginErrors } from '../../../../../server/src/modules/auth/login/google/google-login.types';
+import useGoogleLogin from '../../../hooks/use-google-login';
+import GoogleButton from './google-button';
+import RedirectSuccessful from './redirect-successful';
 
 interface LoginFormErrors {
   mail: FormValidationInfoField;
   password: FormValidationInfoField;
 }
 
-type GoogleAndLoginErrors = LoginErrors & GoogleLoginErrors;
-
 const Login = () => {
   const [form] = useForm();
   const recaptchaRef: RefObject<ReCAPTCHA> = React.createRef<ReCAPTCHA>();
   const dispatch = useDispatch();
   const history = useHistory();
-  const [isFetchingGoogle, setIsFetchingGoogle] = useState(false);
   const [password, setPassword] = useState('');
   const [mail, setMail] = useState('');
-  const [loginErrors, setLoginErrors] = useState<GoogleAndLoginErrors>({});
-  const [googleToken, setGoogleToken] = useState('');
-  const [googleLoginSuccessful, setGoogleLoginSuccessful] = useState(false);
+  const [loginErrors, setLoginErrors] = useState<LoginErrors & GoogleLoginErrors>({});
   const notifyResponseError = useNotification();
+  const {
+    isFetching,
+    setIsFetching,
+    onGoogleResponse,
+    onGoogleResponseFail,
+    googleErrors,
+    googleLoginSuccessful
+  } = useGoogleLogin();
 
   const [loginFormErrors, setLoginFormErrors] = useState<LoginFormErrors>({
     mail: { status: '', message: '' },
     password: { status: '', message: '' }
   });
   const [loginSuccessful, setLoginSuccessful] = useState(false);
-
-  const GOOGLE_LOGIN_USER = gql`
-    mutation {
-      googleLogin(token: "${googleToken}") {
-        ... on GoogleLoginResponse {
-          user {
-            id
-            fullName
-            mail
-            profileImageUrl
-          }
-          token
-        }
-        ... on GoogleLoginErrors {
-          _tokenInvalid
-        }
-      }
-    }
-  `;
 
   const LOGIN_USER = gql`
     mutation{
@@ -95,7 +81,6 @@ const Login = () => {
   `;
 
   const [loginUser, { data, loading }] = useMutation(LOGIN_USER, { fetchPolicy: 'no-cache' });
-  const [googleLoginUser] = useMutation(GOOGLE_LOGIN_USER, { fetchPolicy: 'no-cache' });
 
   const finished = () => {
     loginUser()
@@ -117,27 +102,9 @@ const Login = () => {
       });
   };
 
-  const responseGoogle = (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
-    const res = response as GoogleLoginResponse;
-    setGoogleToken(res.tokenObj.id_token);
-    console.log(response);
-    googleLoginUser()
-      .then(d => {
-        const data = d.data.googleLogin;
-
-        if (data.__typename === 'GoogleLoginResponse') {
-          console.log(data);
-          setGoogleLoginSuccessful(true);
-        }
-        if (data.__typename === 'GoogleLoginErrors') {
-          setLoginErrors(data);
-        }
-      })
-      .catch(e => {})
-      .finally(() => {
-        setIsFetchingGoogle(false);
-      });
-  };
+  useEffect(() => {
+    setLoginErrors(googleErrors);
+  }, [googleErrors]);
 
   const validateLogin = () => {
     if (!isMailValid(mail)) {
@@ -244,7 +211,7 @@ const Login = () => {
                     </Col>
                   </Row>
                   <Row>
-                    <Col span={24} className={'text-right pt-1'}>
+                    <Col span={24} className={'text-right pt-1 pb-4'}>
                       <a
                         className={style.forgotPasswordLink}
                         onClick={() => {
@@ -277,46 +244,23 @@ const Login = () => {
                     </Row>
                   )}
                   {!loginSuccessful && (
-                    <Row>
-                      <GoogleLogin
-                        clientId="315458143733-80m56pstigk1t5q22i3fdrpa0jbvd570.apps.googleusercontent.com"
-                        render={renderProps => (
-                          <Button
-                            loading={isFetchingGoogle}
-                            id={'registerEmailGButton'}
-                            block
-                            className={style.inputButton}
-                            onClick={renderProps.onClick}
-                          >
-                            <img className={style.buttonIcon} src={googleIcon} alt="" />
-                            <span className="ml-1">Σύνεχεια με Google</span>
-                          </Button>
-                        )}
-                        buttonText="Είσοδος με Google"
-                        onRequest={() => {
-                          setIsFetchingGoogle(true);
-                        }}
-                        onSuccess={responseGoogle}
-                        onFailure={responseGoogle}
-                        cookiePolicy={'single_host_origin'}
-                      />
-                      {loginErrors._tokenInvalid && (
-                        <span className={'small-text reduced-spacing color-warning pt-2'}>
-                          Υπηρξε καποιο προβλημα κατα την εισοδο μεσω Google. Προσπαθηστε εκ νεου.
-                        </span>
-                      )}
-                    </Row>
+                    <GoogleButton
+                      isFetching={isFetching}
+                      googleLoginSuccessful={googleLoginSuccessful}
+                      setIsFetching={setIsFetching}
+                      onGoogleResponse={onGoogleResponse}
+                      onGoogleResponseFail={onGoogleResponseFail}
+                    />
                   )}
-                  {(loginSuccessful || googleLoginSuccessful) && (
-                    <Row>
-                      <Col span={24}>
-                        <div className={style.redirectedSoon}>
-                          Είσοδος επιτυχης! Ανακατευθηνση
-                          <Wave text="..." effect="verticalFadeIn" effectChange={0.1} speed={2} />
-                        </div>
-                      </Col>
-                    </Row>
+                  {googleErrors._tokenInvalid && (
+                    <div>
+                      <span className={'small-text reduced-spacing color-warning pt-2'}>
+                        Υπηρξε καποιο προβλημα κατα την εισοδο μεσω Google. Προσπαθηστε εκ νεου.
+                      </span>
+                    </div>
                   )}
+
+                  {loginSuccessful && <RedirectSuccessful />}
                   <Row className={'mt-2 text-smaller text-center'}>
                     <Col span={24} className="mt-4">
                       <hr />

@@ -6,12 +6,11 @@ import googleIcon from '../../../assets/images/icon-google.svg';
 import { Form, Input, Button, Row, Col } from 'antd';
 import GoogleLogin from 'react-google-login';
 import { useMailValidator } from '../../../hooks/use-mail-validators';
-import {
-  FormValidationInfoField,
-  isMailValid,
-  isPasswordAdequate,
-  validateRegistrationInput
-} from '../../../../../shared/validators/auth/common-auth-validator';
+import { FormValidationInfoField, isMailValid } from '../../../../../shared/validators/auth/common-auth-validator';
+import useGoogleLogin from '../../../hooks/use-google-login';
+import { Wave } from 'react-animated-text';
+import { GoogleLoginErrors } from '../../../../../shared/types/api/auth/login';
+import GoogleButton from '../login/google-button';
 
 interface RegisterEmailProps {
   swapView(): any;
@@ -26,9 +25,17 @@ interface RegisterEmailViewErrors {
 export const RegisterEmail: React.FC<RegisterEmailProps> = ({ swapView, setMail }: RegisterEmailProps) => {
   const [form] = Form.useForm();
   const googleButtonRef: any = useRef();
-  const [registrationErrors, setRegistrationErrors] = useState<RegisterEmailViewErrors>({});
+  const [registrationErrors, setRegistrationErrors] = useState<RegisterEmailViewErrors & GoogleLoginErrors>({});
   const [setEmail, email] = useMailValidator(registrationErrors, setRegistrationErrors);
   const [formValidationInfo, setFormValidationInfo] = useState<FormValidationInfoField>({ status: '', message: '' });
+  const {
+    isFetching,
+    setIsFetching,
+    onGoogleResponse,
+    onGoogleResponseFail,
+    googleErrors,
+    googleLoginSuccessful
+  } = useGoogleLogin();
 
   const blockTabOnGoogleButton = (e: any) => {
     if (e.key === 'Tab') {
@@ -71,7 +78,9 @@ export const RegisterEmail: React.FC<RegisterEmailProps> = ({ swapView, setMail 
     }
   }, [email]);
 
-  const responseGoogle = (r: any) => {};
+  useEffect(() => {
+    setRegistrationErrors(googleErrors);
+  }, [googleErrors]);
 
   return (
     <Col span={24} className={'mr-1 mt-4 text-left'}>
@@ -84,7 +93,7 @@ export const RegisterEmail: React.FC<RegisterEmailProps> = ({ swapView, setMail 
               validateStatus={formValidationInfo.status}
               extra={formValidationInfo.message}
             >
-              <Input onChange={onMailChange} placeholder="Λογαριασμός email" />
+              <Input onChange={onMailChange} autoFocus placeholder="Λογαριασμός email" />
             </Form.Item>
           </Col>
         </Row>
@@ -111,27 +120,13 @@ export const RegisterEmail: React.FC<RegisterEmailProps> = ({ swapView, setMail 
             Ή
           </Col>
         </Row>
-        <Row>
-          <GoogleLogin
-            clientId="315458143733-80m56pstigk1t5q22i3fdrpa0jbvd570.apps.googleusercontent.com"
-            render={renderProps => (
-              <Button
-                id={'registerEmailGButton'}
-                ref={googleButtonRef}
-                block
-                className={style.inputButton}
-                onClick={renderProps.onClick}
-              >
-                <img className={style.buttonIcon} src={googleIcon} alt="" />
-                <span className="ml-1">Σύνεχεια με Google</span>
-              </Button>
-            )}
-            buttonText="Login"
-            onSuccess={responseGoogle}
-            onFailure={responseGoogle}
-            cookiePolicy={'single_host_origin'}
-          />
-        </Row>
+        <GoogleButton
+          isFetching={isFetching}
+          googleLoginSuccessful={googleLoginSuccessful}
+          setIsFetching={setIsFetching}
+          onGoogleResponse={onGoogleResponse}
+          onGoogleResponseFail={onGoogleResponseFail}
+        />
         <Row className={'mt-5 text-smaller text-center'}>
           <Col span={24}>
             <hr />

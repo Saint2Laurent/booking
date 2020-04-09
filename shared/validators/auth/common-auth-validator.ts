@@ -31,7 +31,6 @@ export const isPasswordAdequate = (password: string): boolean => {
 
 export const validateRegistrationInput = (mail: string, fullName: string, password: string): RegistrationErrors => {
   let registrationErrors: RegistrationErrors = {};
-  console.log(mail, isMailValid(mail));
   if (!isMailValid(mail)) {
     registrationErrors.mailInvalid = true;
   }
@@ -49,7 +48,6 @@ export const factorFormValidationInfo = (
   registrationErrors: RegistrationErrors
 ): RegisterFormValidationInfo => {
   let mailFormInfo: FormValidationInfoField = { status: '', message: '' };
-  console.log('mailInvalid: ', registrationErrors.mailInvalid);
 
   if (form.isFieldTouched('mail')) {
     if (registrationErrors._mailExists) {
