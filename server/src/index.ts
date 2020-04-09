@@ -42,19 +42,27 @@ const initServer = async () => {
 
   const apolloServer = new ApolloServer({
     context: async ({ req }) => {
-      if (req.headers.authorization) {
-        const token = req.headers.authorization.split('Bearer ')[1];
-        if (token !== 'null') {
-          const tokenInfo = jwt.verify(token, process.env.JWT_SECRET);
+      let token = req.headers.authorization;
+      if (token && token !== '') {
+        token = token.split('Bearer ')[1];
+        const tokenInfo = jwt.verify(token, process.env.JWT_SECRET);
+        if (tokenInfo) {
+          console.log('token exists');
           if (Math.floor(Date.now() / 1000) < tokenInfo.exp) {
-            const user = await User.findOne({ id: tokenInfo.id });
-            if (user) {
-              return { userId: tokenInfo.id, role: user.role };
-            }
+            await User.findOne({ id: tokenInfo.id })
+              .then(user => {
+                return { userId: tokenInfo.id, role: user!.role };
+              })
+              .catch(e => {
+                console.log(e);
+                return {};
+              });
           }
         }
+        return {};
+      } else {
+        return {};
       }
-      return {};
     },
     schema
   });

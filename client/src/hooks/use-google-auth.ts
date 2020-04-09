@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import { GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
+import { GoogleLoginResponse, GoogleLoginResponseOffline, UseGoogleLoginResponse } from 'react-google-login';
+import { GoogleLoginResponse as GoogleAuthResponse } from '../../../shared/types/api/auth/login';
 import { GoogleLoginErrors } from '../../../server/src/modules/auth/login/google/google-login.types';
+import { useHistory } from 'react-router-dom';
+import { login } from '../store/authSlice';
+import { useDispatch } from 'react-redux';
+import { stringify } from 'querystring';
 
-const useGoogleLogin = () => {
+const useGoogleAuth = () => {
   const [googleToken, setGoogleToken] = useState('');
+  const history = useHistory();
+  const dispatch = useDispatch();
 
   const GOOGLE_LOGIN_USER = gql`
     mutation {
@@ -31,6 +38,10 @@ const useGoogleLogin = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [googleErrors, setGoogleErrors] = useState<GoogleLoginErrors>({});
 
+  const historyPush = (url: string) => {
+    history.push(url);
+  };
+
   const onGoogleResponse = (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
     const res = response as GoogleLoginResponse;
     setGoogleToken(res.tokenObj.id_token);
@@ -42,13 +53,15 @@ const useGoogleLogin = () => {
 
   useEffect(() => {
     if (googleToken !== '') {
+      let loginInfo: GoogleAuthResponse;
       googleLoginUser()
         .then(d => {
           const data = d.data.googleLogin;
 
           if (data.__typename === 'GoogleLoginResponse') {
-            console.log(data);
             setGoogleLoginSuccessful(true);
+            const { user, token } = data;
+            loginInfo = { user, token };
           }
           if (data.__typename === 'GoogleLoginErrors') {
             setGoogleErrors({ _tokenInvalid: true });
@@ -59,6 +72,12 @@ const useGoogleLogin = () => {
         })
         .finally(() => {
           setIsFetching(false);
+          if (loginInfo) {
+            const { user, token } = loginInfo;
+            dispatch(login({ user, token }));
+            history.push('/');
+          }
+          console.log(loginInfo);
         });
     }
   }, [googleToken]);
@@ -73,4 +92,4 @@ const useGoogleLogin = () => {
   };
 };
 
-export default useGoogleLogin;
+export default useGoogleAuth;

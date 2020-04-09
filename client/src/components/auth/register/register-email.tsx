@@ -7,7 +7,7 @@ import { Form, Input, Button, Row, Col } from 'antd';
 import GoogleLogin from 'react-google-login';
 import { useMailValidator } from '../../../hooks/use-mail-validators';
 import { FormValidationInfoField, isMailValid } from '../../../../../shared/validators/auth/common-auth-validator';
-import useGoogleLogin from '../../../hooks/use-google-login';
+import useGoogleAuth from '../../../hooks/use-google-auth';
 import { Wave } from 'react-animated-text';
 import { GoogleLoginErrors } from '../../../../../shared/types/api/auth/login';
 import GoogleButton from '../login/google-button';
@@ -35,7 +35,7 @@ export const RegisterEmail: React.FC<RegisterEmailProps> = ({ swapView, setMail 
     onGoogleResponseFail,
     googleErrors,
     googleLoginSuccessful
-  } = useGoogleLogin();
+  } = useGoogleAuth();
 
   const blockTabOnGoogleButton = (e: any) => {
     if (e.key === 'Tab') {
@@ -126,6 +126,7 @@ export const RegisterEmail: React.FC<RegisterEmailProps> = ({ swapView, setMail 
           setIsFetching={setIsFetching}
           onGoogleResponse={onGoogleResponse}
           onGoogleResponseFail={onGoogleResponseFail}
+          googleErrors={googleErrors}
         />
         <Row className={'mt-5 text-smaller text-center'}>
           <Col span={24}>

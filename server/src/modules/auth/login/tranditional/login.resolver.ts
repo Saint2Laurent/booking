@@ -27,7 +27,6 @@ export class LoginResolver {
   @Mutation(() => RegisterResult)
   async loginUser(@Args() { mail, password }: LoginInput): Promise<typeof RegisterResult> {
     const loginErrors: LoginErrors = await validateLoginRequest({ mail, password });
-
     if (!_.some(loginErrors)) {
       const user = await User.findOne({ mail });
       return logUser(user!);

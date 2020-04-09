@@ -2,15 +2,12 @@ import React, { RefObject, useEffect, useState } from 'react';
 import style from '../auth.module.scss';
 import '@ant-design/compatible/assets/index.css';
 import { Row, Col, Input, Form, Button } from 'antd';
-import GoogleLogin, { GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
-import googleIcon from '../../../assets/images/icon-google.svg';
 import { useForm } from 'antd/es/form/util';
 import AuthHeader from '../auth-header';
 import { useDispatch } from 'react-redux';
 import { login } from '../../../store/authSlice';
 import { useHistory } from 'react-router-dom';
 import { useMutation } from '@apollo/react-hooks';
-import { Wave } from 'react-animated-text';
 import { CheckOutlined } from '@ant-design/icons';
 import gql from 'graphql-tag';
 import {
@@ -22,7 +19,7 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import { LoginErrors } from '../../../../../server/src/modules/auth/login/tranditional/login.types';
 import useNotification from '../../../hooks/use-notification';
 import { GoogleLoginErrors } from '../../../../../server/src/modules/auth/login/google/google-login.types';
-import useGoogleLogin from '../../../hooks/use-google-login';
+import useGoogleAuth from '../../../hooks/use-google-auth';
 import GoogleButton from './google-button';
 import RedirectSuccessful from './redirect-successful';
 
@@ -47,7 +44,7 @@ const Login = () => {
     onGoogleResponseFail,
     googleErrors,
     googleLoginSuccessful
-  } = useGoogleLogin();
+  } = useGoogleAuth();
 
   const [loginFormErrors, setLoginFormErrors] = useState<LoginFormErrors>({
     mail: { status: '', message: '' },
@@ -80,7 +77,7 @@ const Login = () => {
     }
   `;
 
-  const [loginUser, { data, loading }] = useMutation(LOGIN_USER, { fetchPolicy: 'no-cache' });
+  const [loginUser, { loading }] = useMutation(LOGIN_USER, { fetchPolicy: 'no-cache' });
 
   const finished = () => {
     loginUser()
@@ -90,10 +87,10 @@ const Login = () => {
           setLoginErrors(data);
         }
         if (data.__typename === 'LoginResponse') {
-          console.log(data);
           setLoginSuccessful(true);
           const { user, token } = data;
           dispatch(login({ user, token }));
+          history.push('/');
         }
       })
       .catch(e => {
@@ -250,14 +247,8 @@ const Login = () => {
                       setIsFetching={setIsFetching}
                       onGoogleResponse={onGoogleResponse}
                       onGoogleResponseFail={onGoogleResponseFail}
+                      googleErrors={googleErrors}
                     />
-                  )}
-                  {googleErrors._tokenInvalid && (
-                    <div>
-                      <span className={'small-text reduced-spacing color-warning pt-2'}>
-                        Υπηρξε καποιο προβλημα κατα την εισοδο μεσω Google. Προσπαθηστε εκ νεου.
-                      </span>
-                    </div>
                   )}
 
                   {loginSuccessful && <RedirectSuccessful />}

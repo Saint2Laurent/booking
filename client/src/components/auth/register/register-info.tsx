@@ -17,8 +17,11 @@ import { CheckOutlined } from '@ant-design/icons';
 import { Wave } from 'react-animated-text';
 import { RegistrationErrors } from '../../../../../shared/types/api/auth/register';
 import { useNotification } from '../../../hooks/use-notification';
-import useGoogleLogin from '../../../hooks/use-google-login';
+import useGoogleAuth from '../../../hooks/use-google-auth';
 import GoogleButton from '../login/google-button';
+import { login } from '../../../store/authSlice';
+import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
 interface RegisterInfoProps {
   mail: string;
@@ -29,7 +32,10 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
   const recaptchaRef: RefObject<ReCAPTCHA> = React.createRef<ReCAPTCHA>();
   const [form] = Form.useForm();
   const fullNameRef: any = useRef();
+  const dispatch = useDispatch();
   const [registerSuccessful, setRegisterSuccessful] = useState(false);
+  const history = useHistory();
+
   const [fullName, setFullName] = useState('');
   const [password, setPassword] = useState('');
   const [registrationErrors, setRegistrationErrors] = useState<RegistrationErrors>({});
@@ -41,7 +47,7 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
     onGoogleResponseFail,
     googleErrors,
     googleLoginSuccessful
-  } = useGoogleLogin();
+  } = useGoogleAuth();
 
   const [formValidationInfo, setFormValidationInfo] = useState<RegisterFormValidationInfo>({
     mail: {
@@ -86,11 +92,15 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
   const register = e => {
     registerUser()
       .then(d => {
-        if (d.data.registerUser.__typename === 'RegistrationResponse' && d.data.registerUser.success) {
+        const data = d.data;
+        if (data.registerUser.__typename === 'RegistrationResponse' && data.registerUser.success) {
           setRegisterSuccessful(true);
+          const { user, token } = data;
+          dispatch(login({ user, token }));
+          history.push('/');
         }
-        if (d.data.registerUser.__typename === 'RegistrationErrors') {
-          setFormValidationInfo(factorFormValidationInfo(form, { ...d.data.registerUser }));
+        if (data.registerUser.__typename === 'RegistrationErrors') {
+          setFormValidationInfo(factorFormValidationInfo(form, { ...data.registerUser }));
         }
       })
       .catch(e => {
@@ -145,6 +155,7 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
               className={'p-0 mb-2'}
               name="mail"
               hasFeedback
+              htmlFor={'email'}
               validateStatus={formValidationInfo.mail.status}
               extra={formValidationInfo.mail.message}
             >
@@ -216,6 +227,7 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
             setIsFetching={setIsFetching}
             onGoogleResponse={onGoogleResponse}
             onGoogleResponseFail={onGoogleResponseFail}
+            googleErrors={googleErrors}
           />
         )}
 

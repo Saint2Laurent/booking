@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Col, Row } from 'antd';
+import { Button, Col, Form, Row } from 'antd';
 import GoogleLogin from 'react-google-login';
 import style from '../auth.module.scss';
 import googleIcon from '../../../assets/images/icon-google.svg';
@@ -9,6 +9,7 @@ import RedirectSuccessful from './redirect-successful';
 interface GoogleButtonPropTypes {
   isFetching: boolean;
   googleLoginSuccessful: boolean;
+  googleErrors: any;
   setIsFetching: any;
   onGoogleResponse: any;
   onGoogleResponseFail: any;
@@ -19,7 +20,8 @@ const GoogleButton: React.FC<GoogleButtonPropTypes> = ({
   googleLoginSuccessful,
   setIsFetching,
   onGoogleResponse,
-  onGoogleResponseFail
+  onGoogleResponseFail,
+  googleErrors
 }: GoogleButtonPropTypes) => {
   return (
     <div>
@@ -56,6 +58,14 @@ const GoogleButton: React.FC<GoogleButtonPropTypes> = ({
           cookiePolicy={'single_host_origin'}
         />
       </Row>
+      {googleErrors._tokenInvalid && (
+        <div>
+          <span className={'small-text reduced-spacing color-warning pt-2'}>
+            Υπηρξε καποιο προβλημα κατα την εισοδο μεσω Google. Προσπαθηστε εκ νεου.
+          </span>
+        </div>
+      )}
+
       {googleLoginSuccessful && <RedirectSuccessful />}
     </div>
   );

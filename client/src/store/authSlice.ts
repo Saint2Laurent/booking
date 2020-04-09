@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { useEffect } from 'react';
 
 export const slice = createSlice({
   name: 'auth',
