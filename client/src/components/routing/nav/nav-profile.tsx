@@ -1,14 +1,16 @@
 import React from 'react';
 import style from '../nav.module.scss';
 import { useSelector } from 'react-redux';
-import { selectAuth } from '../../../store/authSlice';
+import { useDispatch } from 'react-redux';
+import { incrementAsync, selectAuth } from '../../../store/authSlice';
 import Text from 'react-svg-text';
 
-const getImageDiv = (auth: any) => {
-  if (auth.user.profileUrl) {
+const getImageDiv = (user: any) => {
+  console.log(user);
+  if (user.profileImageUrl) {
     return (
       <div className={style.profileWrapper}>
-        <img className={style.navUserImage} src={auth.user.profileUrl} alt="profileImage" />
+        <img className={style.navUserImage} src={user.profileImageUrl} alt="profileImage" />
       </div>
     );
   } else {
@@ -25,12 +27,20 @@ const getImageDiv = (auth: any) => {
 };
 
 const NavProfile = () => {
-  const { auth } = useSelector(selectAuth);
+  const stateData = useSelector(selectAuth);
+  const auth = stateData.auth;
+  const dispatch = useDispatch();
+
+  const callFn = () => {
+    dispatch(incrementAsync(5));
+  };
 
   return (
-    <div className={style.navProfile}>
-      <div className={style.profileImage}>{getImageDiv(auth)}</div>
-    </div>
+    <React.Fragment>
+      <div className={style.navProfile} onClick={callFn}>
+        {auth.isAuthenticated && <div className={style.profileImage}>{getImageDiv(auth.user)}</div>}
+      </div>
+    </React.Fragment>
   );
 };
 

@@ -12,6 +12,7 @@ module.exports = override(
     }),
     addLessLoader({
         javascriptEnabled: true,
-        modifyVars: { '@primary-color': '#274eff' },
+        modifyVars: { '@primary-color': '#0066ff', 'warning-color': '#FF4D6B' },
+        hack: `true; @import "styles.less"`
     }),
 );

@@ -1,4 +1,4 @@
-import { Arg, Args, createUnionType, Mutation, Query, Resolver } from 'type-graphql';
+import { Args, createUnionType, Mutation, Resolver } from 'type-graphql';
 import { GoogleLoginErrors, GoogleLoginInput, GoogleLoginResponse } from './google-login.types';
 import { plainToClass } from 'class-transformer';
 import { OAuth2Client } from 'google-auth-library';
@@ -22,7 +22,7 @@ export class GoogleLoginResolver {
         idToken: token,
         audience: process.env.GOOGLE_SIGN_IN_CLIENT_API_KEY as string
       })
-      .then(async d => {
+      .then(async (d: any) => {
         const user = await User.findOne({ mail: d.payload.email });
         if (user) {
           if (d.payload.sub === user.googleId) {
@@ -38,8 +38,8 @@ export class GoogleLoginResolver {
         }
       })
       .catch(e => {
-        console.log(e);
         return plainToClass(GoogleLoginErrors, { _tokenInvalid: true });
-      });
+      })
+      .finally(() => {});
   }
 }

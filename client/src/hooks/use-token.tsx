@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from 'react';
 
 const useToken = () => {
-  const [tokenExists, setTokenExists] = useState(false);
-  const deleteToken = () => localStorage.removeItem('token');
+  const [token, setToken] = useState<string | null>();
 
   useEffect(() => {
     let token = localStorage.getItem('token');
     if (token !== undefined && token !== null) {
-      setTokenExists(true);
+      setToken(token);
     }
-  }, []);
+  }, [token]);
 
-  return [tokenExists, deleteToken];
+  return [token];
 };
 
 export default useToken;

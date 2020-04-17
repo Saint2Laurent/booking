@@ -6,8 +6,15 @@
 }
 
 .authLogo{
+  cursor: pointer;
   margin-top: 1rem;
   width: 13rem;
+  user-select: none;
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
 }
 
 .authRedirect{
@@ -30,7 +37,7 @@
 
 
 .authInput::placeholder{
-  color: #a3a3a3;
+  color: #AAA9BC;
   font-size: .85rem;
   letter-spacing: -0.0125rem;
 }
@@ -41,14 +48,14 @@
   height: 2.3rem;
 }
 
-.inputButton[disabled]{
-  background-color: #c5c5c5;
-  cursor: auto;
-}
-
-.inputButton[disabled]:hover{
-  background-color: #d1d1d1;
-}
+//.inputButton[disabled]{
+//  background-color: #c5c5c5;
+//  cursor: auto;
+//}
+//
+//.inputButton[disabled]:hover{
+//  background-color: #d1d1d1;
+//}
 
 .headingTitle{
   font-size: 1.3rem;

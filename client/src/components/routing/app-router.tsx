@@ -19,17 +19,35 @@ const AppRouter = () => {
   const { Content } = Layout;
   const { auth } = useSelector(selectAuth);
   let history = useHistory();
-  const isInAuth = false;
 
   useEffect(() => {
     console.log(auth);
-  }, [auth.isAuthenticated]);
+  });
+
+  // useEffect(() => {
+  //   console.log(auth);
+  //   if (auth.isAuthenticated) {
+  //     history.push('/');
+  //   } else {
+  //     history.push('/auth/login');
+  //   }
+  // }, [auth.isAuthenticated]);
+
+  useEffect(() => {
+    console.log(history);
+    if (history.location.pathname.split('/')[1] === 'auth' && auth.isAuthenticated) {
+      history.push('/');
+    }
+    if (history.location.pathname === '/' && !auth.isAuthenticated) {
+      history.push('/auth/login');
+    }
+  }, [history.location.pathname]);
 
   return (
     <Layout style={{ height: '100vh' }}>
-      {isInAuth && <NavHeader />}
+      {auth.isAuthenticated && <NavHeader />}
       <Layout>
-        {isInAuth && <NavSider />}
+        {auth.isAuthenticated && <NavSider />}
         <Layout>
           <Content className="site-layout-background">
             <Switch>
@@ -46,9 +64,11 @@ const AppRouter = () => {
                 <ForgotPasswordReset />
               </Route>
 
-              <Route path="/" exact>
-                <Dashboard />
-              </Route>
+              {auth.isAuthenticated && (
+                <Route path="/" exact>
+                  <Dashboard />
+                </Route>
+              )}
             </Switch>
           </Content>
         </Layout>

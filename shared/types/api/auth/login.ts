@@ -1,10 +1,11 @@
 import { User } from '../../entity/User';
+import { Response } from '../Response';
 
 export interface GoogleLoginInput {
   token: string;
 }
 
-export interface GoogleLoginResponse {
+export interface GoogleLoginResponse extends Response {
   user: User;
   token: string;
 }
@@ -18,7 +19,7 @@ export interface LoginInput {
   password: string;
 }
 
-export interface LoginResponse {
+export interface LoginResponse extends Response {
   user: User;
   token: string;
 }

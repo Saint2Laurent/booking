@@ -1,17 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import { GoogleLoginResponse, GoogleLoginResponseOffline, UseGoogleLoginResponse } from 'react-google-login';
-import { GoogleLoginResponse as GoogleAuthResponse } from '../../../shared/types/api/auth/login';
+import { GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
+import { GoogleLoginResponse as GoogleAuthResponse, LoginResponse } from '../../../shared/types/api/auth/login';
 import { GoogleLoginErrors } from '../../../server/src/modules/auth/login/google/google-login.types';
-import { useHistory } from 'react-router-dom';
 import { login } from '../store/authSlice';
 import { useDispatch } from 'react-redux';
-import { stringify } from 'querystring';
 
 const useGoogleAuth = () => {
   const [googleToken, setGoogleToken] = useState('');
-  const history = useHistory();
   const dispatch = useDispatch();
 
   const GOOGLE_LOGIN_USER = gql`
@@ -38,16 +35,12 @@ const useGoogleAuth = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [googleErrors, setGoogleErrors] = useState<GoogleLoginErrors>({});
 
-  const historyPush = (url: string) => {
-    history.push(url);
-  };
-
   const onGoogleResponse = (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
     const res = response as GoogleLoginResponse;
     setGoogleToken(res.tokenObj.id_token);
   };
 
-  const onGoogleResponseFail = (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
+  const onGoogleResponseFail = () => {
     setGoogleErrors({ _tokenInvalid: true });
   };
 
@@ -57,9 +50,9 @@ const useGoogleAuth = () => {
       googleLoginUser()
         .then(d => {
           const data = d.data.googleLogin;
-
           if (data.__typename === 'GoogleLoginResponse') {
             setGoogleLoginSuccessful(true);
+            console.log(data);
             const { user, token } = data;
             loginInfo = { user, token };
           }
@@ -68,16 +61,15 @@ const useGoogleAuth = () => {
           }
         })
         .catch(e => {
+          console.log(e);
           setGoogleErrors({ _tokenInvalid: true });
         })
         .finally(() => {
           setIsFetching(false);
           if (loginInfo) {
-            const { user, token } = loginInfo;
+            const { user, token }: LoginResponse = loginInfo;
             dispatch(login({ user, token }));
-            history.push('/');
           }
-          console.log(loginInfo);
         });
     }
   }, [googleToken]);

@@ -2,7 +2,6 @@ import React, { RefObject, useEffect, useRef, useState } from 'react';
 import style from '../auth.module.scss';
 import { Form, Input, Button, Row, Col } from 'antd';
 import '@ant-design/compatible/assets/index.css';
-import googleIcon from '../../../assets/images/icon-google.svg';
 import {
   factorFormValidationInfo,
   RegisterFormValidationInfo,
@@ -14,7 +13,6 @@ import { useMailValidator } from '../../../hooks/use-mail-validators';
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { CheckOutlined } from '@ant-design/icons';
-import { Wave } from 'react-animated-text';
 import { RegistrationErrors } from '../../../../../shared/types/api/auth/register';
 import { useNotification } from '../../../hooks/use-notification';
 import useGoogleAuth from '../../../hooks/use-google-auth';
@@ -22,6 +20,7 @@ import GoogleButton from '../login/google-button';
 import { login } from '../../../store/authSlice';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { LoginResponse } from '../../../../../shared/types/api/auth/login';
 
 interface RegisterInfoProps {
   mail: string;
@@ -75,6 +74,18 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
       ) {
         ... on RegistrationResponse {
           success
+          loginResponse {
+            user {
+              id
+              mail
+              fullName
+              isConfirmed
+              role
+              isGoogle
+              googleId
+            }
+            token
+          }
         }
         ... on RegistrationErrors {
           mailInvalid
@@ -85,6 +96,7 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
         }
       }
     }
+
 `;
 
   const [registerUser, { data, loading }] = useMutation(REGISTER_USER, { fetchPolicy: 'no-cache' });
@@ -95,7 +107,7 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
         const data = d.data;
         if (data.registerUser.__typename === 'RegistrationResponse' && data.registerUser.success) {
           setRegisterSuccessful(true);
-          const { user, token } = data;
+          const { user, token }: LoginResponse = data.registerUser.loginResponse;
           dispatch(login({ user, token }));
           history.push('/');
         }
@@ -209,27 +221,18 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
 
         <Row className={'text-center'}>
           <Col span={24}>
-            {registerSuccessful ? (
-              <div className={style.redirectedSoon}>
-                Εγγραφή επιτυχης! Ανακατευθηνση
-                <Wave text="..." effect="verticalFadeIn" effectChange={0.1} speed={2} />
-              </div>
-            ) : (
-              <span>Ή</span>
-            )}
+            <span>Ή</span>
           </Col>
         </Row>
 
-        {!registerSuccessful && (
-          <GoogleButton
-            isFetching={isFetching}
-            googleLoginSuccessful={googleLoginSuccessful}
-            setIsFetching={setIsFetching}
-            onGoogleResponse={onGoogleResponse}
-            onGoogleResponseFail={onGoogleResponseFail}
-            googleErrors={googleErrors}
-          />
-        )}
+        <GoogleButton
+          isFetching={isFetching}
+          googleLoginSuccessful={googleLoginSuccessful}
+          setIsFetching={setIsFetching}
+          onGoogleResponse={onGoogleResponse}
+          onGoogleResponseFail={onGoogleResponseFail}
+          googleErrors={googleErrors}
+        />
 
         <Row className={'mt-4 text-smaller text-center'}>
           <Col span={24}>

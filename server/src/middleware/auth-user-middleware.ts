@@ -1,5 +1,5 @@
 import { AuthChecker } from 'type-graphql';
-import { Role } from '../../../../shared/types/entity/User';
+import { Role } from '../../../shared/types/entity/User';
 
 interface Context {
   userId: string;

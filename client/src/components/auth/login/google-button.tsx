@@ -2,9 +2,8 @@ import React from 'react';
 import { Button, Col, Form, Row } from 'antd';
 import GoogleLogin from 'react-google-login';
 import style from '../auth.module.scss';
-import googleIcon from '../../../assets/images/icon-google.svg';
+import googleIcon from '../../../assets/images/google-ico.png';
 import { CheckOutlined } from '@ant-design/icons';
-import RedirectSuccessful from './redirect-successful';
 
 interface GoogleButtonPropTypes {
   isFetching: boolean;
@@ -65,8 +64,6 @@ const GoogleButton: React.FC<GoogleButtonPropTypes> = ({
           </span>
         </div>
       )}
-
-      {googleLoginSuccessful && <RedirectSuccessful />}
     </div>
   );
 };

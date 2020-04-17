@@ -21,9 +21,10 @@ import useNotification from '../../../hooks/use-notification';
 import { GoogleLoginErrors } from '../../../../../server/src/modules/auth/login/google/google-login.types';
 import useGoogleAuth from '../../../hooks/use-google-auth';
 import GoogleButton from './google-button';
-import RedirectSuccessful from './redirect-successful';
+import { LoginResponse } from '../../../../../shared/types/api/auth/login';
+import { factorFormValidationInfo, validateLogin } from './login.validate';
 
-interface LoginFormErrors {
+export interface LoginFormErrors {
   mail: FormValidationInfoField;
   password: FormValidationInfoField;
 }
@@ -81,16 +82,17 @@ const Login = () => {
 
   const finished = () => {
     loginUser()
-      .then(d => {
-        const data = d.data.loginUser;
+      .then(r => {
+        const data = r.data.loginUser;
+
         if (data.__typename === 'LoginErrors') {
-          setLoginErrors(data);
+          const errors: LoginErrors = data;
+          setLoginErrors(errors);
         }
         if (data.__typename === 'LoginResponse') {
+          const { user, token }: LoginResponse = data;
           setLoginSuccessful(true);
-          const { user, token } = data;
           dispatch(login({ user, token }));
-          history.push('/');
         }
       })
       .catch(e => {
@@ -103,52 +105,12 @@ const Login = () => {
     setLoginErrors(googleErrors);
   }, [googleErrors]);
 
-  const validateLogin = () => {
-    if (!isMailValid(mail)) {
-      setLoginErrors({ mailInvalid: true });
-    } else if (!isPasswordAdequate(password)) {
-      setLoginErrors({ _passwordInvalid: true });
-    } else {
-      setLoginErrors({});
-    }
-  };
-
-  const factorFormValidationInfo = () => {
-    const errors: LoginFormErrors = {
-      mail: { status: '', message: '' },
-      password: { status: '', message: '' }
-    };
-
-    if (form.isFieldTouched('mail')) {
-      if (loginErrors.mailInvalid) {
-        errors.mail = { status: 'warning', message: 'Το email δεν ειναι εγγυρο' };
-      } else if (loginErrors._notRegistered) {
-        errors.mail = { status: 'warning', message: 'Το email δεν ειναι εγγεγραμμενο' };
-      } else if (loginErrors._isGoogle) {
-        errors.mail = {
-          status: 'warning',
-          message: 'Ο λογαριασμος ειναι εγγεγραμμενος μεσω Google, εισελθετε απο την επιλογη "Συνεχεια με Google"'
-        };
-      } else {
-        errors.mail = { status: 'success', message: '' };
-      }
-    }
-
-    if (form.isFieldTouched('password')) {
-      if (loginErrors._passwordInvalid) {
-        errors.password = { status: 'warning', message: 'Ο κωδικος δεν ειναι σωστος' };
-      }
-    }
-
-    setLoginFormErrors(errors);
-  };
-
   useEffect(() => {
-    factorFormValidationInfo();
+    factorFormValidationInfo(form, loginErrors, setLoginFormErrors);
   }, [loginErrors]);
 
   useEffect(() => {
-    validateLogin();
+    validateLogin(mail, password, setLoginErrors);
   }, [mail, password]);
 
   const onMailChange = () => {
@@ -250,8 +212,6 @@ const Login = () => {
                       googleErrors={googleErrors}
                     />
                   )}
-
-                  {loginSuccessful && <RedirectSuccessful />}
                   <Row className={'mt-2 text-smaller text-center'}>
                     <Col span={24} className="mt-4">
                       <hr />

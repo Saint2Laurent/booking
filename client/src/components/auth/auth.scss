@@ -5,7 +5,6 @@
 .ant-input::placeholder{
   font-size: .84rem;
   color: #878787;
-
 }
 
 .ant-form-explain, .ant-form-item-extra{
@@ -13,18 +12,20 @@
   text-align: left;
 }
 
-.ant-btn-primary[disabled].auth-disabled{
-  background-color: #2a45ff !important;
-  color: #eeeeee;
-}
 
-.ant-btn-primary[disabled].auth-disabled:hover{
-  cursor: pointer;
-}
 
-.ant-btn-primary[disabled].auth-disabled:hover{
-  color: #eeeeee;
-}
+//.ant-btn-primary[disabled].auth-disabled{
+//  background-color: #2a45ff !important;
+//  color: #eeeeee;
+//}
+
+//.ant-btn-primary[disabled].auth-disabled:hover{
+//  cursor: pointer;
+//}
+//
+//.ant-btn-primary[disabled].auth-disabled:hover{
+//  color: #eeeeee;
+//}
 
 .ant-form-item-required::before{
   display: none !important;

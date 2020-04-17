@@ -1,9 +1,10 @@
-import { Args, Authorized, createUnionType, Mutation, Resolver } from 'type-graphql';
+import { Args, createUnionType, Ctx, Mutation, Resolver } from 'type-graphql';
 
 import { User } from '../../../../entity/User';
 import { plainToClass } from 'class-transformer';
 import { validateLoginRequest } from './login.validation';
 import { LoginErrors, LoginInput, LoginResponse } from './login.types';
+import { Context } from 'vm';
 
 const _ = require('loadsh');
 
@@ -27,7 +28,7 @@ export class LoginResolver {
   @Mutation(() => RegisterResult)
   async loginUser(@Args() { mail, password }: LoginInput): Promise<typeof RegisterResult> {
     const loginErrors: LoginErrors = await validateLoginRequest({ mail, password });
-    if (!_.some(loginErrors)) {
+    if (Object.keys(loginErrors).length === 0) {
       const user = await User.findOne({ mail });
       return logUser(user!);
     }

@@ -1,16 +1,12 @@
 import { Query, Resolver, Arg, Mutation, Args, createUnionType } from 'type-graphql';
 import { plainToClass } from 'class-transformer';
 import { User } from '../../../../entity/User';
-
 import { RegisterConfirmation } from '../../../../entity/RegisterConfirmation';
 import { v4 as uuid } from 'uuid';
-import { sendConfirmationMail } from '../../../../utils/mail/mailer';
 import { validateRegisterRequest } from './register.validation';
 import { logUser } from '../../login/tranditional/login.resolver';
 import { RegistrationErrors, RegistrationInput, RegistrationResponse } from './register.types';
 const argon2 = require('argon2');
-const bcrypt = require('bcryptjs');
-const validator = require('validator');
 const _ = require('loadsh');
 
 const RegisterResult = createUnionType({
@@ -29,10 +25,7 @@ export class RegisterResolver {
   @Query(() => Boolean)
   async isUserRegistered(@Arg('mail') mail: string) {
     const user = await User.findOne({ mail });
-    if (user) {
-      return true;
-    }
-    return false;
+    return !!user;
   }
 
   @Mutation(() => RegisterResult)
@@ -41,7 +34,7 @@ export class RegisterResolver {
     const user = await User.findOne({ mail: mail });
     console.log(fullName);
     let registrationErrors: RegistrationErrors = validateRegisterRequest({ fullName, mail, password }, user);
-    if (_.some(registrationErrors)) {
+    if (Object.keys(registrationErrors).length !== 0) {
       return plainToClass(RegistrationErrors, registrationErrors);
     }
 

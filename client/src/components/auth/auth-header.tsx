@@ -14,7 +14,7 @@ const AuthHeader: React.FC<AuthHeaderProps> = props => {
   return (
     <Row>
       <Col span={24} className={'mt-4'}>
-        <img src={logo} className={style.authLogo} alt="" />
+        <img src={logo} onClick={() => history.push('/')} className={style.authLogo} alt="" />
         <Col xs={{ span: 0 }} md={{ span: 24 }} className={style.authRedirect}>
           <Button onClick={() => history.push('/auth/' + props.targetLocation)} ghost>
             {props.targetLocation === 'register' ? 'Εγγραφή' : 'Είσοδος'}
