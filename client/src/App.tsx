@@ -28,6 +28,7 @@ const App = () => {
         role
         isGoogle
         googleId
+        profileImageUrl
       }
     }
   `;

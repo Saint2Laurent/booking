@@ -33,7 +33,7 @@ export class GoogleLoginResolver {
           }
         } else {
           const newUser = await registerUserGoogle(d);
-          const loginResponse = logUser(newUser);
+          const loginResponse = logUser(newUser, d.payload.picture);
           return plainToClass(GoogleLoginResponse, { ...loginResponse });
         }
       })

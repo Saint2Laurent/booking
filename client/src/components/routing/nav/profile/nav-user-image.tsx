@@ -16,6 +16,8 @@ const NavUserImage: React.FC<NavUserImageProps> = ({ user, togglePanel, shouldTo
     }
   };
 
+  console.log(user);
+
   return (
     <div className={style.userImage}>
       {user.isGoogle && (

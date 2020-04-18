@@ -4,8 +4,30 @@ $dark-color: rgba(16, 16, 16, 0.94);
 $light-color: rgba(255, 255, 255, 0.93);
 $tot: #ff4d44;
 
+
+@-webkit-keyframes slide-in-fwd-center{0%{-webkit-transform:translateZ(-1400px);transform:translateZ(-1400px);opacity:0}100%{-webkit-transform:translateZ(0);transform:translateZ(0);opacity:1}}@keyframes slide-in-fwd-center{0%{-webkit-transform:translateZ(-1400px);transform:translateZ(-1400px);opacity:0}100%{-webkit-transform:translateZ(0);transform:translateZ(0);opacity:1}}
+.slide-in-fwd-center{-webkit-animation:slide-in-fwd-center 1s cubic-bezier(.25,.46,.45,.94) both;animation:slide-in-fwd-center .7s cubic-bezier(.25,.46,.45,.94) both}
+
+
+.slide-out-bck-center{-webkit-animation:slide-out-bck-center .5s cubic-bezier(.55,.085,.68,.53) both;animation:slide-out-bck-center .5s cubic-bezier(.55,.085,.68,.53) both}
+@-webkit-keyframes slide-out-bck-center{0%{-webkit-transform:translateZ(0);transform:translateZ(0);opacity:1}100%{-webkit-transform:translateZ(-1100px);transform:translateZ(-1100px);opacity:0}}@keyframes slide-out-bck-center{0%{-webkit-transform:translateZ(0);transform:translateZ(0);opacity:1}100%{-webkit-transform:translateZ(-1100px);transform:translateZ(-1100px);opacity:0}}
+
+
+
+
+
+
 *{
   font-family: 'Open Sans', sans-serif !important;
+}
+
+
+img{
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
 }
 
 a{

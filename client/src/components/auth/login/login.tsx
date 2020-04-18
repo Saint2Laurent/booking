@@ -66,6 +66,7 @@ const Login = () => {
             role
             isGoogle
             googleId
+            profileImageUrl
           }
         }
         ... on LoginErrors{

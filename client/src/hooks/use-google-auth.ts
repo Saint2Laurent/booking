@@ -17,8 +17,12 @@ const useGoogleAuth = () => {
         ... on GoogleLoginResponse {
           user {
             id
-            fullName
             mail
+            fullName
+            isConfirmed
+            role
+            isGoogle
+            googleId
             profileImageUrl
           }
           token

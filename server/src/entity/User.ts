@@ -42,5 +42,6 @@ export class User extends BaseEntity implements UserInterface {
   role: Role;
 
   @Field({ nullable: true })
+  @Column({ nullable: true })
   profileImageUrl?: string;
 }

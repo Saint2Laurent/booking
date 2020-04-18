@@ -10,6 +10,7 @@ export const registerUserGoogle = async (ticket: LoginTicket): Promise<User> => 
     password: await argon2.hash(ticket.payload.iss),
     isConfirmed: true,
     isGoogle: true,
-    googleId: ticket.payload.sub
+    googleId: ticket.payload.sub,
+    profileImageUrl: ticket.payload.picture
   }).save();
 };
