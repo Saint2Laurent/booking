@@ -1,7 +1,7 @@
 import React from 'react';
 import { Layout, Menu } from 'antd';
 import style from '../nav.module.scss';
-import NavProfile from './nav-profile';
+import NavProfile from './profile/nav-profile';
 import '../nav.scss';
 import logo from '../../../assets/images/logo-solo.svg';
 import useIsMobile from '../../../hooks/use-is-mobile';

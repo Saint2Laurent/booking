@@ -6,7 +6,7 @@ import { BrowserRouter as Router, useParams, useHistory } from 'react-router-dom
 import useOnlineStatus from './hooks/use-is-online';
 import useToken from './hooks/use-token';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectAuth, setUser, setIsAuthenticated } from './store/authSlice';
+import { selectAuth, setUser, setIsAuthenticated, logout } from './store/authSlice';
 import { ToastProvider } from 'react-toast-notifications';
 import { useHistoryTravel } from '@umijs/hooks';
 import { useLazyQuery, useMutation, useQuery } from '@apollo/react-hooks';
@@ -17,7 +17,6 @@ const App = () => {
   let isOnline = useOnlineStatus();
   const [token] = useToken();
   const dispatch = useDispatch();
-  const isLoggedIn = useSelector(selectAuth);
 
   const ME = gql`
     query {
@@ -44,21 +43,6 @@ const App = () => {
       }
     }
   });
-
-  useEffect(() => {
-    console.log('token changed');
-  }, [token]);
-
-  useEffect(() => {
-    // console.log(isOnline);\
-    // registerUser()
-    //   .then(d => {
-    //     console.log(d);
-    //   })
-    //   .catch(e => {
-    //     console.log(e);
-    //   });
-  }, []);
 
   return (
     <React.Fragment>

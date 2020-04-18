@@ -6,8 +6,7 @@ import { usePersistFn } from '@umijs/hooks';
 
 const persistConfig = {
   key: 'root',
-  storage,
-  whitelist: ['auth ']
+  storage
 };
 
 const rootReducer = combineReducers({

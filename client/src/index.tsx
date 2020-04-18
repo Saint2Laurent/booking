@@ -7,7 +7,6 @@ import { HttpLink } from 'apollo-link-http';
 import { InMemoryCache, IntrospectionFragmentMatcher } from 'apollo-cache-inmemory';
 import introspectionQueryResultData from './fragmentTypes.json';
 import ApolloClient from 'apollo-client';
-import { ApolloLink, Observable } from 'apollo-link';
 import { setContext } from 'apollo-link-context';
 import { PersistGate } from 'redux-persist/integration/react';
 import { persistor, store } from './store/store';
@@ -37,7 +36,7 @@ const client = new ApolloClient({
 
 ReactDOM.render(
   <Provider store={store}>
-    <PersistGate persistor={persistor}>
+    <PersistGate loading={null} persistor={persistor}>
       <ApolloProvider client={client}>
         <App />
       </ApolloProvider>

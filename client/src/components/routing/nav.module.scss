@@ -19,9 +19,6 @@
   background: linear-gradient(to left, rgba(49, 71, 85, 0.6), rgba(0, 14, 29, 0)) !important; /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
-.navSiderItem{
-
-}
 
 
 .navLogo{
@@ -42,12 +39,27 @@
   margin-left: auto;
 }
 
+
 .profileImage{
   box-shadow: 0px 0px 10px #bababa;
   padding: .5rem;
   background-color: #16161a;
   border-radius: 50%;
   border: 1px solid #e9e9f0;
+}
+
+.imagePanel{
+  zoom: 200%;
+  padding: .9rem 0 .9rem 0;
+  background-color: rgba(255, 255, 0, 0.84);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.userImage{
+  width: 2.7rem;
 }
 
 .navUserImage{
@@ -70,6 +82,68 @@
   justify-content: center;
 }
 
+.navProfilePanel{
+  position: absolute;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+  top: 4rem;
+  width: 20vw;
+  z-index: 300;
+  right: 1rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.panelMail{
+  line-height: 1rem;
+}
+
+.panelFullname{
+  padding-top: 1rem;
+  font-size: 1.7rem;
+  line-height: 2.2rem;
+}
+
+.panelRole{
+  line-height: 2.9rem;
+}
+
+.panelFooter{
+  border-top: 1px solid rgba(0, 0, 0, 0.11);
+  width: 100%;
+  font-size: .8rem;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  line-height: 3rem;
+  margin-top: 2rem;
+}
+
+.panelFooterGutter{
+  padding: 0 .4rem 0 .4rem;
+}
+
+
+.panelLogout{
+  line-height: 2.3rem;
+  cursor: pointer;
+}
+
+.panelLogout:hover{
+  opacity: .9;
+}
+
+
+@media only screen and (max-width: 1500px) {
+  .navProfilePanel{
+    width: 35vw !important;
+  }
+}
+
+
 
 @media only screen and (max-width: 769px) {
   .navProfile{
@@ -79,5 +153,10 @@
 
   .navbar{
     padding: .6rem 1rem .6rem 1.5rem;
+  }
+
+  .navProfilePanel{
+    width: 80vw !important;
+    left: 10vw;
   }
 }

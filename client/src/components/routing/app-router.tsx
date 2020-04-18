@@ -7,34 +7,34 @@ import { Layout, Menu } from 'antd';
 
 import NavHeader from './nav/nav-header';
 import NavSider from './nav/nav-sider';
-import { useSelector } from 'react-redux';
-import { selectAuth } from '../../store/authSlice';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout, selectAuth } from '../../store/authSlice';
 import Dashboard from '../dashboard/dashboard';
-import useIsInAuth from '../../hooks/use-is-in-auth';
 import ForgotPassword from '../auth/forgot-password/forgot-password';
 import ForgotPasswordReset from '../auth/forgot-password/forgot-password-reset';
 
 const AppRouter = () => {
   const { Content } = Layout;
   const { auth } = useSelector(selectAuth);
+  const dispatch = useDispatch();
   let history = useHistory();
 
   useEffect(() => {
-    console.log(auth);
-  });
-
-  // useEffect(() => {
-  //   console.log(auth);
-  //   if (auth.isAuthenticated) {
-  //     history.push('/');
-  //   } else {
-  //     history.push('/auth/login');
-  //   }
-  // }, [auth.isAuthenticated]);
+    if (auth.isAuthenticated) {
+      history.push('/');
+    } else {
+      history.push('/auth/login');
+    }
+  }, [auth.isAuthenticated]);
 
   useEffect(() => {
-    console.log(history);
+    console.log('running');
+    if (!localStorage.getItem('token') && auth.isAuthenticated) {
+      dispatch(dispatch(logout()));
+    }
+  }, [localStorage.getItem('token')]);
+
+  useEffect(() => {
     if (history.location.pathname.split('/')[1] === 'auth' && auth.isAuthenticated) {
       history.push('/');
     }
