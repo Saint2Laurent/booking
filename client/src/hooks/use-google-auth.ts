@@ -37,7 +37,7 @@ const useGoogleAuth = () => {
   const [googleLoginUser] = useMutation(GOOGLE_LOGIN_USER, { fetchPolicy: 'no-cache' });
   const [googleLoginSuccessful, setGoogleLoginSuccessful] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
-  const [googleErrors, setGoogleErrors] = useState<GoogleLoginErrors>({});
+  const [errors, setErrors] = useState<GoogleLoginErrors>({});
 
   const onGoogleResponse = (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
     const res = response as GoogleLoginResponse;
@@ -45,7 +45,7 @@ const useGoogleAuth = () => {
   };
 
   const onGoogleResponseFail = () => {
-    setGoogleErrors({ _tokenInvalid: true });
+    setErrors({ _tokenInvalid: true });
   };
 
   useEffect(() => {
@@ -61,12 +61,12 @@ const useGoogleAuth = () => {
             loginInfo = { user, token };
           }
           if (data.__typename === 'GoogleLoginErrors') {
-            setGoogleErrors({ _tokenInvalid: true });
+            setErrors({ _tokenInvalid: true });
           }
         })
         .catch(e => {
           console.log(e);
-          setGoogleErrors({ _tokenInvalid: true });
+          setErrors({ _tokenInvalid: true });
         })
         .finally(() => {
           setIsFetching(false);
@@ -83,7 +83,7 @@ const useGoogleAuth = () => {
     setIsFetching,
     onGoogleResponse,
     onGoogleResponseFail,
-    googleErrors,
+    googleErrors: errors,
     googleLoginSuccessful
   };
 };

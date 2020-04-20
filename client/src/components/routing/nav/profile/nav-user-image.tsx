@@ -16,10 +16,8 @@ const NavUserImage: React.FC<NavUserImageProps> = ({ user, togglePanel, shouldTo
     }
   };
 
-  console.log(user);
-
   return (
-    <div className={style.userImage}>
+    <div className={`${style.userImage} ${shouldToggle ? `cursor-pointer` : ``}`}>
       {user.isGoogle && (
         <div onClick={toggle} className={style.profileImage}>
           <div className={style.profileWrapper}>
@@ -29,7 +27,7 @@ const NavUserImage: React.FC<NavUserImageProps> = ({ user, togglePanel, shouldTo
       )}
 
       {!user.isGoogle && (
-        <div onClick={toggle} className={style.profileImage}>
+        <div onClick={toggle} className={`${style.profileImage} ${shouldToggle ? `cursor-pointer` : ``}`}>
           <div className={style.profileWrapper}>
             <svg className={style.svgImage}>
               <Text verticalAnchor="start" y={4} x={0} fontSize={'1.5rem'}>

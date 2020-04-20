@@ -36,7 +36,7 @@ const Login = () => {
   const history = useHistory();
   const [password, setPassword] = useState('');
   const [mail, setMail] = useState('');
-  const [loginErrors, setLoginErrors] = useState<LoginErrors & GoogleLoginErrors>({});
+  const [errors, setErrors] = useState<LoginErrors & GoogleLoginErrors>({});
   const notifyResponseError = useNotification();
   const {
     isFetching,
@@ -47,7 +47,7 @@ const Login = () => {
     googleLoginSuccessful
   } = useGoogleAuth();
 
-  const [loginFormErrors, setLoginFormErrors] = useState<LoginFormErrors>({
+  const [formErrors, setFormErrors] = useState<LoginFormErrors>({
     mail: { status: '', message: '' },
     password: { status: '', message: '' }
   });
@@ -88,7 +88,7 @@ const Login = () => {
 
         if (data.__typename === 'LoginErrors') {
           const errors: LoginErrors = data;
-          setLoginErrors(errors);
+          setErrors(errors);
         }
         if (data.__typename === 'LoginResponse') {
           const { user, token }: LoginResponse = data;
@@ -103,24 +103,16 @@ const Login = () => {
   };
 
   useEffect(() => {
-    setLoginErrors(googleErrors);
+    setErrors(googleErrors);
   }, [googleErrors]);
 
   useEffect(() => {
-    factorFormValidationInfo(form, loginErrors, setLoginFormErrors);
-  }, [loginErrors]);
+    factorFormValidationInfo(form, errors, setFormErrors);
+  }, [errors]);
 
   useEffect(() => {
-    validateLogin(mail, password, setLoginErrors);
+    validateLogin(mail, password, setErrors);
   }, [mail, password]);
-
-  const onMailChange = () => {
-    setMail(form.getFieldValue('mail'));
-  };
-
-  const onPasswordChange = () => {
-    setPassword(form.getFieldValue('password'));
-  };
 
   return (
     <Row className={style.container}>
@@ -148,11 +140,15 @@ const Login = () => {
                         htmlFor={'email'}
                         name="mail"
                         hasFeedback
-                        validateStatus={loginFormErrors.mail.status}
-                        extra={loginFormErrors.mail.message}
+                        validateStatus={formErrors.mail.status}
+                        extra={formErrors.mail.message}
                         className={style.authFormItem}
                       >
-                        <Input onChange={onMailChange} autoFocus placeholder="Το email σας" />
+                        <Input
+                          onChange={() => setMail(form.getFieldValue('mail'))}
+                          autoFocus
+                          placeholder="Το email σας"
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -162,11 +158,14 @@ const Login = () => {
                         name="password"
                         htmlFor={'password'}
                         hasFeedback
-                        validateStatus={loginFormErrors.password.status}
-                        extra={loginFormErrors.password.message}
+                        validateStatus={formErrors.password.status}
+                        extra={formErrors.password.message}
                         className={'p-0 m-0'}
                       >
-                        <Input.Password onChange={onPasswordChange} placeholder="Κώδικος" />
+                        <Input.Password
+                          onChange={() => setPassword(form.getFieldValue('password'))}
+                          placeholder="Κώδικος"
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -186,7 +185,7 @@ const Login = () => {
                   <Row className="mt-5">
                     <Button
                       icon={loginSuccessful && <CheckOutlined />}
-                      disabled={Object.keys(loginErrors).length !== 0 || loginSuccessful}
+                      disabled={Object.keys(errors).length !== 0 || loginSuccessful}
                       loading={loading}
                       htmlType={'submit'}
                       block

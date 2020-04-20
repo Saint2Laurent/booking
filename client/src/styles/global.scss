@@ -105,12 +105,24 @@ a{
   cursor: pointer;
 }
 
+.cursor-pointer{
+  cursor: pointer;
+}
+
 .bgTest{
   background-color: red !important;
 }
 
 .borderTest{
   border: 1px solid #828282 !important;
+}
+
+.d-block{
+  display: block !important;
+}
+
+.ant-form-item-label > label{
+
 }
 
 .text-info{

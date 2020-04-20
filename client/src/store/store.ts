@@ -2,7 +2,6 @@ import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import authReducer from './authSlice';
 import storage from 'redux-persist/lib/storage';
 import { persistStore, persistReducer } from 'redux-persist';
-import { usePersistFn } from '@umijs/hooks';
 
 const persistConfig = {
   key: 'root',

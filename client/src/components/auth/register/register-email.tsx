@@ -25,9 +25,9 @@ interface RegisterEmailViewErrors {
 export const RegisterEmail: React.FC<RegisterEmailProps> = ({ swapView, setMail }: RegisterEmailProps) => {
   const [form] = Form.useForm();
   const googleButtonRef: any = useRef();
-  const [registrationErrors, setRegistrationErrors] = useState<RegisterEmailViewErrors & GoogleLoginErrors>({});
-  const [setEmail, email] = useMailValidator(registrationErrors, setRegistrationErrors);
-  const [formValidationInfo, setFormValidationInfo] = useState<FormValidationInfoField>({ status: '', message: '' });
+  const [errors, setErrors] = useState<RegisterEmailViewErrors & GoogleLoginErrors>({});
+  const [setEmail, email] = useMailValidator(errors, setErrors);
+  const [formErrors, setFormErrors] = useState<FormValidationInfoField>({ status: '', message: '' });
   const {
     isFetching,
     setIsFetching,
@@ -54,32 +54,28 @@ export const RegisterEmail: React.FC<RegisterEmailProps> = ({ swapView, setMail 
     swapView();
   };
 
-  const onMailChange = () => {
-    setEmail(form.getFieldValue('mail'));
-  };
-
   useEffect(() => {
     if (form.isFieldTouched('mail')) {
-      if (registrationErrors._mailExists) {
-        setFormValidationInfo({ status: 'warning', message: 'Το email υπαρχει ηδη' });
-      } else if (registrationErrors.mailInvalid) {
-        setFormValidationInfo({ status: 'warning', message: 'Το email δεν ειναι σωστο' });
+      if (errors._mailExists) {
+        setFormErrors({ status: 'warning', message: 'Το email υπαρχει ηδη' });
+      } else if (errors.mailInvalid) {
+        setFormErrors({ status: 'warning', message: 'Το email δεν ειναι σωστο' });
       } else {
-        setFormValidationInfo({ status: 'success', message: '' });
+        setFormErrors({ status: 'success', message: '' });
       }
     }
-  }, [registrationErrors]);
+  }, [errors]);
 
   useEffect(() => {
     if (!isMailValid(email)) {
-      setRegistrationErrors({ mailInvalid: true });
+      setErrors({ mailInvalid: true });
     } else {
-      setRegistrationErrors({});
+      setErrors({});
     }
   }, [email]);
 
   useEffect(() => {
-    setRegistrationErrors(googleErrors);
+    setErrors(googleErrors);
   }, [googleErrors]);
 
   return (
@@ -87,13 +83,8 @@ export const RegisterEmail: React.FC<RegisterEmailProps> = ({ swapView, setMail 
       <Form form={form} onFinish={finished}>
         <Row>
           <Col span={24}>
-            <Form.Item
-              name="mail"
-              hasFeedback
-              validateStatus={formValidationInfo.status}
-              extra={formValidationInfo.message}
-            >
-              <Input onChange={onMailChange} autoFocus placeholder="Λογαριασμός email" />
+            <Form.Item name="mail" hasFeedback validateStatus={formErrors.status} extra={formErrors.message}>
+              <Input onChange={() => setEmail(form.getFieldValue('mail'))} autoFocus placeholder="Λογαριασμός email" />
             </Form.Item>
           </Col>
         </Row>
@@ -109,7 +100,7 @@ export const RegisterEmail: React.FC<RegisterEmailProps> = ({ swapView, setMail 
             htmlType={'submit'}
             block
             className={`${style.inputButton} auth-disabled`}
-            disabled={Object.keys(registrationErrors).length !== 0}
+            disabled={Object.keys(errors).length !== 0}
             type={'primary'}
           >
             Σύνεχεια

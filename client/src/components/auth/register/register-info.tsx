@@ -37,7 +37,7 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
 
   const [fullName, setFullName] = useState('');
   const [password, setPassword] = useState('');
-  const [registrationErrors, setRegistrationErrors] = useState<RegistrationErrors>({});
+  const [errors, setErrors] = useState<RegistrationErrors>({});
   const notifyResponseError = useNotification();
   const {
     isFetching,
@@ -63,7 +63,7 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
     }
   });
 
-  const [setEmail, email] = useMailValidator(registrationErrors, setRegistrationErrors);
+  const [setEmail, email] = useMailValidator(errors, setErrors);
 
   const REGISTER_USER = gql`
      mutation {
@@ -101,7 +101,7 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
 
   const [registerUser, { data, loading }] = useMutation(REGISTER_USER, { fetchPolicy: 'no-cache' });
 
-  const register = e => {
+  const register = () => {
     registerUser()
       .then(d => {
         const data = d.data;
@@ -130,32 +130,20 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
     }
   }, [mail]);
 
-  const onMailChange = () => {
-    setEmail(form.getFieldValue('mail'));
-  };
-
-  const onPasswordChange = () => {
-    setPassword(form.getFieldValue('password'));
-  };
-
-  const onFullNameChange = () => {
-    setFullName(form.getFieldValue('fullName'));
-  };
-
   useEffect(() => {
-    setFormValidationInfo(factorFormValidationInfo(form, registrationErrors));
-  }, [registrationErrors]);
+    setFormValidationInfo(factorFormValidationInfo(form, errors));
+  }, [errors]);
 
   useEffect(() => {
     let errors: RegistrationErrors = {};
-    if (registrationErrors._mailExists !== undefined) {
-      errors._mailExists = registrationErrors._mailExists;
+    if (errors._mailExists !== undefined) {
+      errors._mailExists = errors._mailExists;
     }
-    setRegistrationErrors({ ...errors, ...validateRegistrationInput(email, fullName, password) });
+    setErrors({ ...errors, ...validateRegistrationInput(email, fullName, password) });
   }, [email, password, fullName]);
 
   const disableRegistration = () => {
-    return Object.keys(registrationErrors).length !== 0 || registerSuccessful;
+    return Object.keys(errors).length !== 0 || registerSuccessful;
   };
 
   return (
@@ -171,7 +159,7 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
               validateStatus={formValidationInfo.mail.status}
               extra={formValidationInfo.mail.message}
             >
-              <Input onChange={onMailChange} placeholder="Λογαριασμός email" />
+              <Input onChange={() => setEmail(form.getFieldValue('mail'))} placeholder="Λογαριασμός email" />
             </Form.Item>
           </Col>
         </Row>
@@ -185,7 +173,11 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
               validateStatus={formValidationInfo.fullName.status}
               extra={formValidationInfo.fullName.message}
             >
-              <Input ref={fullNameRef} onChange={onFullNameChange} placeholder="Πλήρες όνομα" />
+              <Input
+                ref={fullNameRef}
+                onChange={() => setFullName(form.getFieldValue('fullName'))}
+                placeholder="Πλήρες όνομα"
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -200,7 +192,7 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
               validateStatus={formValidationInfo.password.status}
               extra={formValidationInfo.password.message}
             >
-              <Input.Password onChange={onPasswordChange} />
+              <Input.Password onChange={() => setPassword(form.getFieldValue('password'))} />
             </Form.Item>
           </Col>
         </Row>

@@ -20,6 +20,9 @@ const NavProfile = () => {
   return (
     <React.Fragment>
       <div className={style.navProfile}>
+        <div onClick={togglePanel} className={style.navBarName}>
+          {state.user.fullName.split(' ')[0]}
+        </div>
         {state.isAuthenticated && <NavUserImage user={state.user} togglePanel={togglePanel} shouldToggle={true} />}
       </div>
       {isOpen && (

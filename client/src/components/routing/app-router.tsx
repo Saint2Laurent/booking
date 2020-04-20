@@ -12,6 +12,7 @@ import { logout, selectAuth } from '../../store/authSlice';
 import Dashboard from '../dashboard/dashboard';
 import ForgotPassword from '../auth/forgot-password/forgot-password';
 import ForgotPasswordReset from '../auth/forgot-password/forgot-password-reset';
+import AccountsSettings from '../settings/accounts/accounts-settings';
 
 const AppRouter = () => {
   const { Content } = Layout;
@@ -20,15 +21,12 @@ const AppRouter = () => {
   let history = useHistory();
 
   useEffect(() => {
-    if (auth.isAuthenticated) {
-      history.push('/');
-    } else {
+    if (!auth.isAuthenticated) {
       history.push('/auth/login');
     }
   }, [auth.isAuthenticated]);
 
   useEffect(() => {
-    console.log('running');
     if (!localStorage.getItem('token') && auth.isAuthenticated) {
       dispatch(dispatch(logout()));
     }
@@ -67,6 +65,11 @@ const AppRouter = () => {
               {auth.isAuthenticated && (
                 <Route path="/" exact>
                   <Dashboard />
+                </Route>
+              )}
+              {auth.isAuthenticated && (
+                <Route path="/settings/accounts" exact>
+                  <AccountsSettings />
                 </Route>
               )}
             </Switch>

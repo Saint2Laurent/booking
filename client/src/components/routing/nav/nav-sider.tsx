@@ -21,7 +21,7 @@ const NavSider = () => {
           }}
         >
           <UserOutlined />
-          <span>Προσωπικο</span>
+          <span>Λογαριασμοι</span>
         </Menu.Item>
         <Menu.Item key="2" className={`nav-sider-item`}>
           <VideoCameraOutlined />
