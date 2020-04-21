@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm';
-import { ObjectType, Field, ID } from 'type-graphql';
+import { ObjectType, Field, ID, InputType, ArgsType } from 'type-graphql';
 import { registerEnumType } from 'type-graphql';
 import { Role, User as UserInterface } from '../../../shared/types/entity/User';
 

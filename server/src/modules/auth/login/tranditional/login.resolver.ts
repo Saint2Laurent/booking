@@ -4,9 +4,6 @@ import { User } from '../../../../entity/User';
 import { plainToClass } from 'class-transformer';
 import { validateLoginRequest } from './login.validation';
 import { LoginErrors, LoginInput, LoginResponse } from './login.types';
-import { Context } from 'vm';
-
-const _ = require('loadsh');
 
 const RegisterResult = createUnionType({
   name: 'RegisterResult',

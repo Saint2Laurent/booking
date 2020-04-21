@@ -14,12 +14,6 @@ const RegisterResult = createUnionType({
   types: () => [RegistrationResponse, RegistrationErrors]
 });
 
-function sleep(ms: number) {
-  return new Promise(resolve => {
-    setTimeout(resolve, ms);
-  });
-}
-
 @Resolver()
 export class RegisterResolver {
   @Query(() => Boolean)
@@ -30,7 +24,6 @@ export class RegisterResolver {
 
   @Mutation(() => RegisterResult)
   async registerUser(@Args() { fullName, mail, password }: RegistrationInput): Promise<typeof RegisterResult> {
-    await sleep(750);
     const user = await User.findOne({ mail: mail });
     console.log(fullName);
     let registrationErrors: RegistrationErrors = validateRegisterRequest({ fullName, mail, password }, user);
