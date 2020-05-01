@@ -2,6 +2,7 @@ import React from 'react';
 import style from '../settings.module.scss';
 import { Row } from 'antd';
 import MyAccountSettings from './my-account-settings';
+import StaffAccountSettings from './staff-account-settings';
 
 const AccountsSettings = () => {
   return (
@@ -11,6 +12,9 @@ const AccountsSettings = () => {
       </Row>
       <Row>
         <MyAccountSettings />
+      </Row>
+      <Row>
+        <StaffAccountSettings />
       </Row>
     </div>
   );

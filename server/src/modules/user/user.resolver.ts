@@ -4,6 +4,7 @@ import { User } from '../../entity/User';
 import fetch from 'nodemailer/lib/fetch';
 import { UpdateUserErrors, UpdateUserResponse, UpdateUserInput } from './user.types';
 import { plainToClass } from 'class-transformer';
+import { updateUserValidation } from './user.validation';
 
 const UpdateUserResult = createUnionType({
   name: 'UpdateUserResult',
@@ -18,9 +19,25 @@ export class UserResolver {
   }
 
   @Mutation(() => UpdateUserResult)
-  async updateUser(@Arg('UpdateInputType') user: UpdateUserInput): Promise<typeof UpdateUserResult> {
-    // console.log(user.id, ctx.id);
+  async updateUser(
+    @Args() { id, mail, fullName, password }: UpdateUserInput,
+    @Ctx() ctx: Context
+  ): Promise<typeof UpdateUserResult> {
+    /**
+     * User updating his own account
+     */
 
-    return plainToClass(UpdateUserErrors, {});
+    console.log(password);
+    const errors: UpdateUserErrors = await updateUserValidation(id, ctx.id, mail, fullName, password);
+
+    if (Object.keys(errors).length !== 0) {
+      return plainToClass(UpdateUserErrors, errors);
+    }
+
+    await User.update(id, { mail, fullName, password });
+    const user = await User.findOne({ id });
+    console.log(user);
+
+    return plainToClass(UpdateUserResponse, { user });
   }
 }

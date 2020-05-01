@@ -19,6 +19,7 @@ node_modules/*
 ####
 
 # misc
+./server/.env
 .DS_Store
 .env.local
 .env.development.local

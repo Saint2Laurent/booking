@@ -1,7 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, BeforeInsert, BeforeUpdate, AfterInsert } from 'typeorm';
 import { ObjectType, Field, ID, InputType, ArgsType } from 'type-graphql';
 import { registerEnumType } from 'type-graphql';
 import { Role, User as UserInterface } from '../../../shared/types/entity/User';
+import { Branch } from './Branch';
+const argon2 = require('argon2');
 
 registerEnumType(Role, {
   name: 'Role'
@@ -44,4 +46,16 @@ export class User extends BaseEntity implements UserInterface {
   @Field({ nullable: true })
   @Column({ nullable: true })
   profileImageUrl?: string;
+
+  @AfterInsert()
+  async afterInsert() {
+    await Branch.create({ userId: this.id })
+      .save()
+      .then(b => {
+        console.log(b);
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  }
 }

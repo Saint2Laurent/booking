@@ -6,22 +6,26 @@ import {
 } from '../../../../shared/types/api/user/user';
 import { User } from '../../entity/User';
 
-@InputType()
-export class UpdateUserInput implements Partial<User>{
+@ArgsType()
+export class UpdateUserInput implements Partial<User> {
   @Field()
-  id: string
+  id: string;
 
-  @Field()
+  @Field({ nullable: true })
+  mail: string;
 
+  @Field({ nullable: true })
+  fullName: string;
 
-
+  @Field({ nullable: true })
+  password: string;
 }
 
-// @ObjectType()
-// export class UpdateUserResponse implements UpdateUserResponseInterface {
-//   @Field()
-//   user: User;
-// }
+@ObjectType()
+export class UpdateUserResponse implements UpdateUserResponseInterface {
+  @Field()
+  user: User;
+}
 
 @ObjectType()
 export class UpdateUserErrors implements UpdateUserErrorsInterface {
@@ -33,4 +37,7 @@ export class UpdateUserErrors implements UpdateUserErrorsInterface {
 
   @Field({ nullable: true })
   passwordInvalid?: boolean;
+
+  @Field({ nullable: true })
+  fullNameInvalid?: boolean;
 }

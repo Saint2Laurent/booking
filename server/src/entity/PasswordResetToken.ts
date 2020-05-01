@@ -1,5 +1,6 @@
 import { Field, ID, ObjectType } from 'type-graphql';
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from './User';
 
 @ObjectType()
 @Entity()
@@ -10,6 +11,8 @@ export class PasswordResetToken extends BaseEntity {
 
   @Field()
   @Column()
+  @OneToOne(type => User)
+  @JoinColumn()
   userId: string;
 
   @Field()

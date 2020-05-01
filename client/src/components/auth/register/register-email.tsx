@@ -11,6 +11,7 @@ import useGoogleAuth from '../../../hooks/use-google-auth';
 import { Wave } from 'react-animated-text';
 import { GoogleLoginErrors } from '../../../../../shared/types/api/auth/login';
 import GoogleButton from '../login/google-button';
+import { defaultFormValidationField } from '../../../misc/types';
 
 interface RegisterEmailProps {
   swapView(): any;
@@ -24,10 +25,9 @@ interface RegisterEmailViewErrors {
 
 export const RegisterEmail: React.FC<RegisterEmailProps> = ({ swapView, setMail }: RegisterEmailProps) => {
   const [form] = Form.useForm();
-  const googleButtonRef: any = useRef();
   const [errors, setErrors] = useState<RegisterEmailViewErrors & GoogleLoginErrors>({});
   const [setEmail, email] = useMailValidator(errors, setErrors);
-  const [formErrors, setFormErrors] = useState<FormValidationInfoField>({ status: '', message: '' });
+  const [formErrors, setFormErrors] = useState<FormValidationInfoField>({ ...defaultFormValidationField });
   const {
     isFetching,
     setIsFetching,

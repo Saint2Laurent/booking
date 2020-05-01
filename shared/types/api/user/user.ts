@@ -15,5 +15,7 @@ export interface UpdateUserResponse {
 export interface UpdateUserErrors {
   notAuthorized?: boolean;
   mailInvalid?: boolean;
+  fullNameInvalid?: boolean;
   passwordInvalid?: boolean;
+  passwordsDoNotMatch?: boolean;
 }

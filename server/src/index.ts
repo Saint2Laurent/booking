@@ -12,6 +12,7 @@ import { GoogleLoginResolver } from './modules/auth/login/google/google-login.re
 import { ResolveUserMiddleware } from './middleware/resolve-user-middleware';
 import { resolveUser } from './middleware/resolve-user';
 import { UserResolver } from './modules/user/user.resolver';
+import { Branch } from './entity/Branch';
 require('dotenv').config();
 
 const app = Express();
@@ -68,6 +69,13 @@ const initServer = async () => {
 
 initServer()
   .then(() => {
+    // const user = Branch.findOne({ id: 'bdb8f159-f485-448c-b161-357bef97c7d3' }, { relations: ['user'] })
+    //   .then(u => {
+    //     console.log(u);
+    //   })
+    //   .catch(e => {
+    //     console.log(e);
+    //   });
     console.log('Server running at port ', process.env.PORT);
   })
   .catch(e => {

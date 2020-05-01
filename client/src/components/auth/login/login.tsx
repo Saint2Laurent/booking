@@ -23,6 +23,7 @@ import useGoogleAuth from '../../../hooks/use-google-auth';
 import GoogleButton from './google-button';
 import { LoginResponse } from '../../../../../shared/types/api/auth/login';
 import { factorFormValidationInfo, validateLogin } from './login.validate';
+import { defaultFormValidationField } from '../../../misc/types';
 
 export interface LoginFormErrors {
   mail: FormValidationInfoField;
@@ -48,8 +49,8 @@ const Login = () => {
   } = useGoogleAuth();
 
   const [formErrors, setFormErrors] = useState<LoginFormErrors>({
-    mail: { status: '', message: '' },
-    password: { status: '', message: '' }
+    mail: defaultFormValidationField,
+    password: defaultFormValidationField
   });
   const [loginSuccessful, setLoginSuccessful] = useState(false);
 

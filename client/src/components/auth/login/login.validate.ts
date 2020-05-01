@@ -1,5 +1,6 @@
 import { isMailValid, isPasswordAdequate } from '../../../../../shared/validators/auth/common-auth-validator';
 import { LoginFormErrors } from './login';
+import { defaultFormValidationField } from '../../../misc/types';
 
 export const validateLogin = (mail, password, setLoginErrors) => {
   if (!isMailValid(mail)) {
@@ -12,10 +13,7 @@ export const validateLogin = (mail, password, setLoginErrors) => {
 };
 
 export const factorFormValidationInfo = (form, loginErrors, setLoginFormErrors) => {
-  const errors: LoginFormErrors = {
-    mail: { status: '', message: '' },
-    password: { status: '', message: '' }
-  };
+  const errors: LoginFormErrors = { mail: defaultFormValidationField, password: defaultFormValidationField };
 
   if (form.isFieldTouched('mail')) {
     if (loginErrors.mailInvalid) {

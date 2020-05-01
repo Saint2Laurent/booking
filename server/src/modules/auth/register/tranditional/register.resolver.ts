@@ -6,6 +6,7 @@ import { v4 as uuid } from 'uuid';
 import { validateRegisterRequest } from './register.validation';
 import { logUser } from '../../login/tranditional/login.resolver';
 import { RegistrationErrors, RegistrationInput, RegistrationResponse } from './register.types';
+import { Branch } from '../../../../entity/Branch';
 const argon2 = require('argon2');
 const _ = require('loadsh');
 

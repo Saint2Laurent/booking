@@ -9,11 +9,12 @@ import { CheckOutlined } from '@ant-design/icons';
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { CSSTransition } from 'react-transition-group';
+import { defaultFormValidationField } from '../../../misc/types';
 
 const ForgotPassword = () => {
   const [form] = Form.useForm();
-  const [forgotPasswordErrors, setForgotPasswordErrors] = useState<RequestPasswordResetErrors>({});
-  const [formErrors, setFormErrors] = useState<FormValidationInfoField>({ status: '', message: '' });
+  const [errors, setErrors] = useState<RequestPasswordResetErrors>({});
+  const [formErrors, setFormErrors] = useState<FormValidationInfoField>({ ...defaultFormValidationField });
   const [setEmail, email, isRegistered] = useMailValidator();
   const [requestSuccessful, setRequestSuccessful] = useState(false);
 
@@ -45,7 +46,7 @@ const ForgotPassword = () => {
         }
         if (data.__typename === 'RequestPasswordResetErrors') {
           console.log(data);
-          setForgotPasswordErrors(data);
+          setErrors(data);
         }
       })
       .catch(e => {
@@ -55,11 +56,11 @@ const ForgotPassword = () => {
 
   const factorFormValidationInfo = () => {
     let formFieldErrors: FormValidationInfoField = { status: '', message: '' };
-    console.log(forgotPasswordErrors);
+    console.log(errors);
     if (form.isFieldTouched('mail')) {
-      if (forgotPasswordErrors.mailInvalid) {
+      if (errors.mailInvalid) {
         formFieldErrors = { status: 'warning', message: 'Το email δεν ειναι εγγυρο' };
-      } else if (forgotPasswordErrors._mailNotRegistered) {
+      } else if (errors._mailNotRegistered) {
         formFieldErrors = { status: 'warning', message: 'Το email δεν ειναι εγγεγραμενο' };
       } else {
         formFieldErrors = { status: 'success', message: '' };
@@ -70,20 +71,20 @@ const ForgotPassword = () => {
 
   useEffect(() => {
     factorFormValidationInfo();
-  }, [forgotPasswordErrors]);
+  }, [errors]);
 
   useEffect(() => {
     if (!isMailValid(form.getFieldValue('mail'))) {
-      setForgotPasswordErrors({ mailInvalid: true });
+      setErrors({ mailInvalid: true });
     } else {
-      setForgotPasswordErrors({});
+      setErrors({});
     }
   }, [form.getFieldValue('mail')]);
 
   useEffect(() => {
     console.log(isRegistered);
     if (!isRegistered) {
-      setForgotPasswordErrors({ ...forgotPasswordErrors, _mailNotRegistered: true });
+      setErrors({ ...errors, _mailNotRegistered: true });
     } else {
       setFormErrors({ status: 'success', message: '' });
     }
@@ -118,7 +119,7 @@ const ForgotPassword = () => {
                       <Form.Item hasFeedback extra={formErrors.message} validateStatus={formErrors.status} name="mail">
                         <Input onChange={onMailChange} placeholder="Λογαριασμός email" />
                       </Form.Item>
-                      {forgotPasswordErrors._tooManyAttempts && (
+                      {errors._tooManyAttempts && (
                         <Row className={'m-0 p-0'}>
                           <Form.Item
                             hasFeedback
@@ -142,7 +143,7 @@ const ForgotPassword = () => {
                               </CSSTransition>
                             )
                           }
-                          disabled={Object.keys(forgotPasswordErrors).length !== 0 || requestSuccessful}
+                          disabled={Object.keys(errors).length !== 0 || requestSuccessful}
                           loading={loading}
                           htmlType={'submit'}
                           block

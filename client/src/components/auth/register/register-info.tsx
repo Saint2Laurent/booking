@@ -21,6 +21,7 @@ import { login } from '../../../store/authSlice';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { LoginResponse } from '../../../../../shared/types/api/auth/login';
+import { defaultFormValidationField } from '../../../misc/types';
 
 interface RegisterInfoProps {
   mail: string;
@@ -49,18 +50,9 @@ const RegisterInfo: React.FC<RegisterInfoProps> = ({ mail, initView }: RegisterI
   } = useGoogleAuth();
 
   const [formValidationInfo, setFormValidationInfo] = useState<RegisterFormValidationInfo>({
-    mail: {
-      status: '',
-      message: ''
-    },
-    fullName: {
-      status: '',
-      message: ''
-    },
-    password: {
-      status: '',
-      message: ''
-    }
+    mail: defaultFormValidationField,
+    fullName: defaultFormValidationField,
+    password: defaultFormValidationField
   });
 
   const [setEmail, email] = useMailValidator(errors, setErrors);
