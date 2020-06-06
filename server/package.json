@@ -15,7 +15,7 @@
     "typescript": "^3.7.2"
   },
   "dependencies": {
-    "apollo-server-express": "^2.11.0",
+    "apollo-server-express": "^2.14.2",
     "argon2": "^0.26.1",
     "bcryptjs": "^2.4.3",
     "class-transformer": "^0.2.3",
