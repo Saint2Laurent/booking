@@ -4,7 +4,7 @@
   "host": "localhost",
   "post":  5432,
   "username": "postgres",
-  "password": "revariapodw",
+  "password": "easypass",
   "database": "ubook",
   "synchronize": true,
   "entities": [

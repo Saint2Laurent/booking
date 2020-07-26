@@ -33,7 +33,7 @@ export const useMailValidator = (registrationErrors?, setRegistrationErrors?) =>
   });
 
   const queryResolved = (d: TData) => {
-    if (d.isUserRegistered) {
+    if (d && d.isUserRegistered) {
       setIsRegistered(true);
       if (registrationErrors !== undefined) {
         setRegistrationErrors({ ...registrationErrors, _mailExists: true });

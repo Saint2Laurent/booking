@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import style from '../settings.module.scss';
 import { Form, Input, Row, Col, Button } from 'antd';
-import { useForm } from 'antd/es/form/util';
 import { selectAuth, setUser } from '../../../store/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import gql from 'graphql-tag';
@@ -11,6 +10,7 @@ import { FormValidationInfoField } from '../../../../../shared/validators/auth/c
 import { defaultFormValidationField } from '../../../misc/types';
 import { CheckOutlined } from '@ant-design/icons';
 import useNotification from '../../../hooks/use-notification';
+import {useForm} from "antd/es/form/Form";
 
 interface UpdateUserFormErrors {
   mail: FormValidationInfoField;

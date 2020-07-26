@@ -32,7 +32,7 @@ export class GoogleLoginResolver {
             return plainToClass(GoogleLoginErrors, { _tokenInvalid: true });
           }
         } else {
-          const newUser = await registerUserGoogle(d);
+          const newUser:User = await registerUserGoogle(d) as User;
           const loginResponse = logUser(newUser, d.payload.picture);
           return plainToClass(GoogleLoginResponse, { ...loginResponse });
         }

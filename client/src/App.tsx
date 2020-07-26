@@ -37,7 +37,7 @@ const App = () => {
     skip: isEmpty(token),
     onCompleted: d => {
       console.log('runned');
-      const user: User = d.me;
+      const user: User = d;
       if (user) {
         dispatch(setUser(user));
         dispatch(setIsAuthenticated(true));

@@ -2,7 +2,6 @@ import React, { RefObject, useEffect, useState } from 'react';
 import style from '../auth.module.scss';
 import '@ant-design/compatible/assets/index.css';
 import { Row, Col, Input, Form, Button } from 'antd';
-import { useForm } from 'antd/es/form/util';
 import AuthHeader from '../auth-header';
 import { useDispatch } from 'react-redux';
 import { login } from '../../../store/authSlice';
@@ -24,6 +23,7 @@ import GoogleButton from './google-button';
 import { LoginResponse } from '../../../../../shared/types/api/auth/login';
 import { factorFormValidationInfo, validateLogin } from './login.validate';
 import { defaultFormValidationField } from '../../../misc/types';
+import { useForm } from 'antd/lib/form/Form';
 
 export interface LoginFormErrors {
   mail: FormValidationInfoField;

@@ -1,7 +1,7 @@
 import React from 'react';
 import style from '../settings.module.scss';
 import { Col, Form, Input, Button, Row } from 'antd';
-import { useForm } from 'antd/lib/form/util';
+import {useForm} from "antd/es/form/Form";
 
 const StaffAccountSettings = () => {
   const [form] = useForm();
